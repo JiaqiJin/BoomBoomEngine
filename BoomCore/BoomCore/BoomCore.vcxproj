@@ -150,7 +150,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ImGui\Dialog.cpp" />
+    <ClCompile Include="ImGui\imgui.cpp" />
+    <ClCompile Include="ImGui\ImGuiOpenGLContext.cpp" />
+    <ClCompile Include="ImGui\imgui_demo.cpp" />
+    <ClCompile Include="ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Renderer\Manager\Shader.cpp" />
+    <ClCompile Include="stb_image.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ImGui\Dialog.h" />
+    <ClInclude Include="ImGui\imconfig.h" />
+    <ClInclude Include="ImGui\imgui.h" />
+    <ClInclude Include="ImGui\ImGuiOpenGLContext.h" />
+    <ClInclude Include="ImGui\imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="ImGui\imgui_internal.h" />
+    <ClInclude Include="ImGui\stb_rect_pack.h" />
+    <ClInclude Include="ImGui\stb_textedit.h" />
+    <ClInclude Include="ImGui\stb_truetype.h" />
+    <ClInclude Include="Renderer\Manager\Shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\shader.fs" />
+    <None Include="Shaders\shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
