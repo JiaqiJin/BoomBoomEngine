@@ -49,6 +49,11 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+
+    // tell GLFW to capture our mouse
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     GLenum err = glewInit();
     if (GLEW_OK != err)
@@ -56,10 +61,10 @@ int main()
         std::cout << "Failed to initialize Glew" << std::endl;
     }
 
-
+    glEnable(GL_DEPTH_TEST);
 
     Kawaii::Shader shader("Shaders/shader.vs", "Shaders/shader.fs");
-    Kawaii::Shader skyBoxShader("Shaders/shader.vs", "Shaders/shader.fs");
+    Kawaii::Shader skyBoxShader("Shaders/skybox.vs", "Shaders/skybox.fs");
 
     //Kawaii::Texture2D texture("res/wall.jpg");
 
@@ -174,8 +179,6 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-    unsigned int cubemapTexture = textureCube.getTextureId();
 
     // shader configuration
      // --------------------
