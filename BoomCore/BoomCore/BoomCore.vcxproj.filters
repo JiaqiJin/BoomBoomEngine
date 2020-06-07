@@ -80,9 +80,14 @@
     <ClInclude Include="Renderer\Manager\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\Camera\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\shader.vs" />
     <None Include="Shaders\shader.fs" />
+    <None Include="Shaders\skybox.vs" />
+    <None Include="Shaders\skybox.fs" />
   </ItemGroup>
 </Project>

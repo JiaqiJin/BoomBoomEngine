@@ -49,5 +49,17 @@ namespace Kawaii
 		virtual void clearTexture();
 	};
 
+	class TextureCube : public Texture
+	{
+	public:
+		TextureCube(const std::string& path, const std::string& postFix);
+		~TextureCube();
 
+		virtual void bind(unsigned int unit);
+		virtual void unBind();
+
+	private:
+		virtual void setupTexture(const std::string& path, const std::string& pFix);
+		virtual void clearTexture();
+	};
 }

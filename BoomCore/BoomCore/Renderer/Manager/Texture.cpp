@@ -94,6 +94,77 @@ namespace Kawaii
 		glDeleteTextures(1, &m_id);
 	}
 
+	TextureCube::TextureCube(const std::string& path, const std::string& postFix)
+	{
+		setupTexture(path, postFix);
+	}
 
+	TextureCube::~TextureCube()
+	{
+		clearTexture();
+	}
 
+	void TextureCube::bind(unsigned int unit)
+	{
+		glActiveTexture(GL_TEXTURE0 + unit);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+	}
+
+	void TextureCube::unBind()
+	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	}
+
+	void TextureCube::setupTexture(const std::string& path, const std::string& pFix)
+	{
+		// load cube map.
+		glGenTextures(1, &m_id);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+		int width, height, nrComponents;
+		// 6 faces.
+		std::vector<std::string> faces =
+		{
+			path + "right" + pFix,
+			path + "left" + pFix,
+			path + "top" + pFix,
+			path + "bottom" + pFix,
+			path + "front" + pFix,
+			path + "back" + pFix
+		};
+		// load the image step by step.
+		for (int x = 0; x < faces.size(); ++x)
+		{
+			unsigned char* data = stbi_load(faces[x].c_str(), &width, &height,
+				&nrComponents, 0);
+			GLenum format;
+			if (nrComponents == 1)
+				format = GL_RED;
+			else if (nrComponents == 3)
+				format = GL_RGB;
+			else if (nrComponents == 4)
+				format = GL_RGBA;
+			if (data)
+			{
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, 0, format,
+					width, height, 0, format, GL_UNSIGNED_BYTE, data);
+			}
+			else
+			{
+				std::cout << "Cubemap texture failed to load at path: "
+					<< faces[x] << std::endl;
+			}
+			stbi_image_free(data);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	}
+
+	void TextureCube::clearTexture()
+	{
+		glDeleteTextures(1, &m_id);
+	}
 }
