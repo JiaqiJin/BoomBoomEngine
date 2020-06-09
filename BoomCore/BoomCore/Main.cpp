@@ -68,6 +68,7 @@ int main()
     Kawaii::Shader shader("Shaders/shader.vs", "Shaders/shader.fs");
     Kawaii::Shader skyBoxShader("Shaders/skybox.vs", "Shaders/skybox.fs");
     Kawaii::Mesh mesh = Kawaii::Cube(10.0f,10.0f,10.0f);
+    Kawaii::Sphere sphere(1.0f, 36, 18);
     //Kawaii::Texture2D texture("res/wall.jpg");
 
     Kawaii::TextureCube textureCube("res/skybox/", ".png");
@@ -171,6 +172,11 @@ int main()
         glBindVertexArray(mesh.getVertexArrayObject());
         textureCube.bind(0);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+
+        glBindVertexArray(sphere.getVertexArrayObject());
+        textureCube.bind(0);
+        glDrawElements(GL_TRIANGLES, sphere.getIndices().size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         // draw skybox as last
