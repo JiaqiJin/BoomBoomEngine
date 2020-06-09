@@ -81,4 +81,5 @@ namespace Kawaii
 		virtual void clearTexture();
 	};
 
+
 }

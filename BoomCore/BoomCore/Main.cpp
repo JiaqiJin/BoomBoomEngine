@@ -7,6 +7,7 @@
 #include "Renderer/Camera/Camera.h"
 #include "Renderer/Manager/Geometry.h"
 #include "Renderer/Manager/Mesh.h"
+#include "Renderer/Manager/TextureMgr.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -67,9 +68,12 @@ int main()
 
     Kawaii::Shader shader("Shaders/shader.vs", "Shaders/shader.fs");
     Kawaii::Shader skyBoxShader("Shaders/skybox.vs", "Shaders/skybox.fs");
-    Kawaii::Mesh mesh = Kawaii::Cube(10.0f,10.0f,10.0f);
+    Kawaii::Cube mesh(8.0f, 8.0f, 8.0f);
     Kawaii::Sphere sphere(1.0f, 36, 18);
     //Kawaii::Texture2D texture("res/wall.jpg");
+    
+    unsigned int skyId = Kawaii::TextureMgr::getSingleton()->loadTextureCube("kawaii","res/skybox/", ".png");
+    std::cout << skyId;
 
     Kawaii::TextureCube textureCube("res/skybox/", ".png");
 
@@ -169,7 +173,7 @@ int main()
         shader.setMat4("projection", projection);
         shader.setVec3("cameraPos", camera.Position);
         // cubes
-        mesh.draw(false, 0);
+        //mesh.draw(false, 0);
 
         sphere.draw(false, 0);
 
@@ -179,9 +183,11 @@ int main()
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
         skyBoxShader.setMat4("view", view);
         skyBoxShader.setMat4("projection", projection);
+
         // skybox cube
         glBindVertexArray(skyboxVAO);
-        textureCube.bind(0);
+        //textureCube.bind(0);
+        Kawaii::TextureMgr::getSingleton()->bindTexture("kawaii", skyId);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default

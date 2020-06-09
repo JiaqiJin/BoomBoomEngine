@@ -162,6 +162,7 @@
     <ClCompile Include="Renderer\Manager\Mesh.cpp" />
     <ClCompile Include="Renderer\Manager\Shader.cpp" />
     <ClCompile Include="Renderer\Manager\Texture.cpp" />
+    <ClCompile Include="Renderer\Manager\TextureMgr.cpp" />
     <ClCompile Include="stb_image.c" />
   </ItemGroup>
   <ItemGroup>
@@ -179,7 +180,9 @@
     <ClInclude Include="Renderer\Manager\Geometry.h" />
     <ClInclude Include="Renderer\Manager\Mesh.h" />
     <ClInclude Include="Renderer\Manager\Shader.h" />
+    <ClInclude Include="Renderer\Manager\Singleton.h" />
     <ClInclude Include="Renderer\Manager\Texture.h" />
+    <ClInclude Include="Renderer\Manager\TextureMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\shader.fs" />
