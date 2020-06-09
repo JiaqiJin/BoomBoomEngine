@@ -167,4 +167,40 @@ namespace Kawaii
 	{
 		glDeleteTextures(1, &m_id);
 	}
+
+	TextureColor::TextureColor(int width, int height, bool hdr)
+		:m_width(width), m_height(height), m_hdr(hdr)
+	{
+		setupTexture("", "");
+	}
+
+	TextureColor::~TextureColor()
+	{
+		clearTexture();
+	}
+
+	void TextureColor::bind(unsigned int unit)
+	{
+		glActiveTexture(GL_TEXTURE0 + unit);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+	}
+
+	void TextureColor::unBind()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void TextureColor::setupTexture(const std::string& path, const std::string& pFix)
+	{
+		// generate depth buffer.
+		glGenTextures(1, &m_id);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+		
+
+	}
+
+	void TextureColor::clearTexture()
+	{
+		glDeleteTextures(1, &m_id);
+	}
 }

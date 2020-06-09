@@ -169,15 +169,9 @@ int main()
         shader.setMat4("projection", projection);
         shader.setVec3("cameraPos", camera.Position);
         // cubes
-        glBindVertexArray(mesh.getVertexArrayObject());
-        textureCube.bind(0);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindVertexArray(0);
+        mesh.draw(false, 0);
 
-        glBindVertexArray(sphere.getVertexArrayObject());
-        textureCube.bind(0);
-        glDrawElements(GL_TRIANGLES, sphere.getIndices().size(), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        sphere.draw(false, 0);
 
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
