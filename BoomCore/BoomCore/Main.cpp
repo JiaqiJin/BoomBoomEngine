@@ -8,6 +8,8 @@
 #include "Renderer/Manager/Geometry.h"
 #include "Renderer/Manager/Mesh.h"
 #include "Renderer/Manager/TextureMgr.h"
+#include "Renderer/Camera/FPSCamera.h"
+#include "Renderer/Camera/Camera3D.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -72,8 +74,11 @@ int main()
     Kawaii::Sphere sphere(1.0f, 36, 18);
     //Kawaii::Texture2D texture("res/wall.jpg");
     
+    Kawaii::FPSCamera fpsCamera(glm::vec3(0.0f, 0.0f, 3.0f));
+    //printf(fpsCamera.getPosition());
+    
     unsigned int skyId = Kawaii::TextureMgr::getSingleton()->loadTextureCube("kawaii","res/skybox/", ".png");
-    std::cout << skyId;
+    //std::cout << skyId;
 
     Kawaii::TextureCube textureCube("res/skybox/", ".png");
 
@@ -157,7 +162,7 @@ int main()
         // input
         // -----
         processInput(window);
-
+       
         // render
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -168,9 +173,15 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
+        fpsCamera.setPerspectiveProject(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        //fpsCamera.lookAt, Kawaii::FPSCamera::LocalUp);
+        glm::mat4 projection1 = fpsCamera.getProjectMatrix();
+        glm::mat4 view1 = fpsCamera.getViewMatrix();        
+        
         shader.setMat4("model", model);
         shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
+        shader.setMat4("projection", projection1);
         shader.setVec3("cameraPos", camera.Position);
         // cubes
         //mesh.draw(false, 0);
@@ -182,7 +193,7 @@ int main()
         skyBoxShader.bind();
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
         skyBoxShader.setMat4("view", view);
-        skyBoxShader.setMat4("projection", projection);
+        skyBoxShader.setMat4("projection", projection1);
 
         // skybox cube
         glBindVertexArray(skyboxVAO);
