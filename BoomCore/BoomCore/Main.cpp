@@ -10,6 +10,9 @@
 #include "Renderer/Manager/TextureMgr.h"
 #include "Renderer/Camera/FPSCamera.h"
 #include "Renderer/Camera/Camera3D.h"
+#include "Renderer/RenderTarget/RenderTarget.h"
+#include "Renderer/Manager/ShaderMgr.h"
+#include "Renderer/Manager/MeshMgr.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -73,10 +76,15 @@ int main()
     Kawaii::Cube mesh(8.0f, 8.0f, 8.0f);
     Kawaii::Sphere sphere(1.0f, 36, 18);
     //Kawaii::Texture2D texture("res/wall.jpg");
-    
+    unsigned int sphereMeshIndex = Kawaii::MeshMgr::getSingleton()->loadMesh(new Kawaii::Sphere(1.0f, 36, 18));
     Kawaii::FPSCamera fpsCamera(glm::vec3(0.0f, 0.0f, 3.0f));
     //printf(fpsCamera.getPosition());
     
+ 
+    unsigned int testShader = Kawaii::ShaderMgr::getSingleton()->loadShader("test", "Shaders/shader.vs", "Shaders/shader.fs");
+    Kawaii::SimpleRender* simpleRender = new Kawaii::SimpleRender(testShader);
+    simpleRender->addMesh(sphereMeshIndex);
+
     unsigned int skyId = Kawaii::TextureMgr::getSingleton()->loadTextureCube("kawaii","res/skybox/", ".png");
     //std::cout << skyId;
 
@@ -141,13 +149,13 @@ int main()
 
     // shader configuration
      // --------------------
-    shader.bind();
-    shader.setInt("skybox", 0);
+    //shader.bind();
+    //shader.setInt("skybox", 0);
 
     skyBoxShader.bind();
     skyBoxShader.setInt("skybox", 0);
 
-
+    Kawaii::ShaderMgr::ptr shaderMgr = Kawaii::ShaderMgr::getSingleton();
 
     // render loop
     // -----------
@@ -169,12 +177,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw scene as normal
-        shader.bind();
+        //shader.bind();
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
-        fpsCamera.setPerspectiveProject(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        /*fpsCamera.setPerspectiveProject(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         //fpsCamera.lookAt, Kawaii::FPSCamera::LocalUp);
         glm::mat4 projection1 = fpsCamera.getProjectMatrix();
         glm::mat4 view1 = fpsCamera.getViewMatrix();        
@@ -185,15 +193,18 @@ int main()
         shader.setVec3("cameraPos", camera.Position);
         // cubes
         //mesh.draw(false, 0);
-
+        
         sphere.draw(false, 0);
+        */
+        Kawaii::Shader::ptr shad = shaderMgr->getShader(testShader);
+        simpleRender->render(&camera, shad);
 
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         skyBoxShader.bind();
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
         skyBoxShader.setMat4("view", view);
-        skyBoxShader.setMat4("projection", projection1);
+        skyBoxShader.setMat4("projection", projection);
 
         // skybox cube
         glBindVertexArray(skyboxVAO);
