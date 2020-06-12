@@ -19,7 +19,7 @@ namespace Kawaii
 
 	}
 
-	void SimpleRender::render(Camera* camera, Shader::ptr shader)
+	void SimpleRender::testrender(Camera* camera, Shader::ptr shader)
 	{
 		shader->bind();
 		shader->setInt("skybox", 0);

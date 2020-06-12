@@ -19,7 +19,7 @@ namespace Kawaii
 		RenderTarget() = default;
 		virtual ~RenderTarget() = default;
 		
-		virtual void render(Camera* camera, Shader::ptr shader = nullptr) = 0;
+		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr) = 0;
 		void addMesh(unsigned int meshIndex) { m_meshIndex.push_back(meshIndex); }
 
 	protected:
@@ -45,10 +45,10 @@ namespace Kawaii
 			return m_list.size() - 1;
 		}
 
-		virtual void render(Camera* camera, Shader::ptr shader = nullptr)
+		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr)
 		{
 			for (auto& it : m_list)
-				it->render(camera, shader);
+				it->testrender(camera, shader);
 		}
 
 	};
@@ -63,7 +63,7 @@ namespace Kawaii
 
 		~SimpleRender() = default;
 
-		virtual void render(Camera* camera, Shader::ptr shader = nullptr);
+		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr);
 	};
 
 

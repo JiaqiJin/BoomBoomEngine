@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 #include <iostream>
 #include "Renderer/Manager/Shader.h"
@@ -13,11 +11,7 @@
 #include "Renderer/RenderTarget/RenderTarget.h"
 #include "Renderer/Manager/ShaderMgr.h"
 #include "Renderer/Manager/MeshMgr.h"
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window);
+#include "Renderer/RenderDevice.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -33,11 +27,12 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 
+
 int main()
 {
     // glfw: initialize and configure
     // ------------------------------
-    glfwInit();
+    /*glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -68,8 +63,10 @@ int main()
     {
         std::cout << "Failed to initialize Glew" << std::endl;
     }
-
-    glEnable(GL_DEPTH_TEST);
+    */
+    Kawaii::RenderDevice render;
+    render.initialize("BoomBoomEngine", SCR_WIDTH, SCR_HEIGHT);
+    //glEnable(GL_DEPTH_TEST);
 
     Kawaii::Shader shader("Shaders/shader.vs", "Shaders/shader.fs");
     Kawaii::Shader skyBoxShader("Shaders/skybox.vs", "Shaders/skybox.fs");
@@ -159,7 +156,7 @@ int main()
 
     // render loop
     // -----------
-    while (!glfwWindowShouldClose(window))
+    while (render.run())
     {
         // per-frame time logic
        // --------------------
@@ -169,7 +166,7 @@ int main()
 
         // input
         // -----
-        processInput(window);
+        render.beginFrame();
        
         // render
         // ------
@@ -197,7 +194,7 @@ int main()
         sphere.draw(false, 0);
         */
         Kawaii::Shader::ptr shad = shaderMgr->getShader(testShader);
-        simpleRender->render(&camera, shad);
+        simpleRender->testrender(&camera, shad);
 
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -216,8 +213,9 @@ int main()
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        //glfwSwapBuffers(window);
+        //glfwPollEvents();
+        render.endFrame();
     }
 
     //glDeleteVertexArrays(1, &cubeVAO);
@@ -227,61 +225,7 @@ int main()
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
-    glfwTerminate();
-    return 0;
+    render.shutdown();
 
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
-
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    camera.ProcessMouseScroll(yoffset);
-}
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-}
