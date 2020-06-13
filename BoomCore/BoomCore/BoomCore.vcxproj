@@ -159,6 +159,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Renderer\Camera\Camera3D.cpp" />
     <ClCompile Include="Renderer\Camera\FPSCamera.cpp" />
+    <ClCompile Include="Renderer\Camera\TPSCamera.cpp" />
     <ClCompile Include="Renderer\Camera\Transform3D.cpp" />
     <ClCompile Include="Renderer\Manager\FrameBuffer.cpp" />
     <ClCompile Include="Renderer\Manager\Geometry.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Renderer\Camera\Camera.h" />
     <ClInclude Include="Renderer\Camera\Camera3D.h" />
     <ClInclude Include="Renderer\Camera\FPSCamera.h" />
+    <ClInclude Include="Renderer\Camera\TPSCamera.h" />
     <ClInclude Include="Renderer\Camera\Transform3D.h" />
     <ClInclude Include="Renderer\Manager\FrameBuffer.h" />
     <ClInclude Include="Renderer\Manager\Geometry.h" />
