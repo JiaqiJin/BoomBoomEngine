@@ -15,7 +15,7 @@ namespace Kawaii
 		float m_mouseSty, m_moveSpeed;
 
 	public:
-		std::shared_ptr<FPSCamera>ptr;
+		typedef std::shared_ptr<FPSCamera>ptr;
 
 		FPSCamera(glm::vec3 pos);
 		virtual ~FPSCamera() = default;

@@ -37,7 +37,7 @@ namespace Kawaii
 	void TPSCamera::onKeyPress(float deltaTime, char key)
 	{
 		// nothing here.
-		switch (key)
+		/*switch (key)
 		{
 		case 'W':
 			this->translation(LocalForward * deltaTime * m_moveSpeed);
@@ -59,7 +59,7 @@ namespace Kawaii
 			break;
 		default:
 			break;
-		}
+		}*/
 	}
 
 	void TPSCamera::onWheelMove(double delta)

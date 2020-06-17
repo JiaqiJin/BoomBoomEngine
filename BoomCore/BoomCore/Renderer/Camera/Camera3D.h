@@ -17,7 +17,7 @@ namespace Kawaii
 		float m_angle, m_aspect, m_near, m_far;
 		
 	public:
-		std::shared_ptr<Camera3D> ptr;
+		typedef std::shared_ptr<Camera3D> ptr;
 
 		// Local axis.
 		static const glm::vec3 LocalForward;
