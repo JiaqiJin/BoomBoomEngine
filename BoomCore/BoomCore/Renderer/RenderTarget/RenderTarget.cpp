@@ -11,10 +11,16 @@ namespace Kawaii
 	{
 		//render all mesh
 		MeshMgr::ptr meshMgr = MeshMgr::getSingleton();
+		TextureMgr::ptr textureMgr = TextureMgr::getSingleton();
+
 		for (unsigned int x = 0; x < m_meshIndex.size(); x++)
 		{
-			//need fix this for more flexibility
-			meshMgr->drawMesh(m_meshIndex[x], false, 0);
+			if (x < m_texIndex.size())
+				textureMgr->bindTexture(m_texIndex[x], x);
+			else
+				textureMgr->unBindTexture(m_texIndex[x]);
+
+			meshMgr->drawMesh(m_meshIndex[x], m_instance, 0);
 		}
 
 	}
@@ -35,6 +41,11 @@ namespace Kawaii
 
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
+	}
+
+	void SimpleRender::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
+	{
+
 	}
 
 }

@@ -1,17 +1,22 @@
 #pragma once
 
-#include "../Manager/Geometry.h"
 #include "../Camera/Camera.h"
+
+#include "../Manager/Geometry.h"
+#include "../Camera/Camera3D.h"
 #include "../Camera/Transform3D.h"
-#include "../Manager/Shader.h"
+#include "../Light.h"
 
 namespace Kawaii
 {
 	class RenderTarget
 	{
 	protected:
+		bool m_instance = false;
+
 		unsigned int m_shaderIndex;
 		std::vector<unsigned int>m_meshIndex;
+		std::vector<unsigned int>m_texIndex;
 
 	public:
 		typedef std::shared_ptr<RenderTarget> ptr;
@@ -20,7 +25,18 @@ namespace Kawaii
 		virtual ~RenderTarget() = default;
 		
 		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr) = 0;
-		void addMesh(unsigned int meshIndex) { m_meshIndex.push_back(meshIndex); }
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,Shader::ptr shader = nullptr) = 0;
+
+		void addMesh(unsigned int meshIndex) 
+		{ 
+			m_meshIndex.push_back(meshIndex);
+		}
+
+		void addTexture(unsigned int texIndex)
+		{
+			m_texIndex.push_back(texIndex);
+		}
+
 
 	protected:
 		void renderImp();
@@ -51,6 +67,14 @@ namespace Kawaii
 				it->testrender(camera, shader);
 		}
 
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr)
+		{
+			for (auto& it : m_list)
+			{
+				it->render(camera, sunLight, lightCamera, shader);
+			}
+		}
+
 	};
 
 	class SimpleRender : public RenderTarget
@@ -64,6 +88,7 @@ namespace Kawaii
 		~SimpleRender() = default;
 
 		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr);
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
 	};
 
 

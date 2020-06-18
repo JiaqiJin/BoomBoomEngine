@@ -170,5 +170,9 @@
     <None Include="Shaders\shader.fs" />
     <None Include="Shaders\skybox.vs" />
     <None Include="Shaders\skybox.fs" />
+    <None Include="Shaders\blinn_phong.vs" />
+    <None Include="Shaders\blinn_phong.fs" />
+    <None Include="Shaders\simple_color.fs" />
+    <None Include="Shaders\simple_color.vs" />
   </ItemGroup>
 </Project>

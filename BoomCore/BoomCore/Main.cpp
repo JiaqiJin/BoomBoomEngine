@@ -30,36 +30,7 @@ float lastFrame = 0.0f;
 
 int main()
 {
-    // glfw: initialize and configure
-    // ------------------------------
-    /*glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "BoomBoomEngine", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-
-    // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-        std::cout << "Failed to initialize Glew" << std::endl;
-    }
-    */
+   
     Kawaii::RenderDevice render;
     render.initialize("BoomBoomEngine", SCR_WIDTH, SCR_HEIGHT);
     //glEnable(GL_DEPTH_TEST);
@@ -77,9 +48,11 @@ int main()
     unsigned int testShader = Kawaii::ShaderMgr::getSingleton()->loadShader("test", "Shaders/shader.vs", "Shaders/shader.fs");
     Kawaii::SimpleRender* simpleRender = new Kawaii::SimpleRender(testShader);
     simpleRender->addMesh(sphereMeshIndex);
+   
 
     unsigned int skyId = Kawaii::TextureMgr::getSingleton()->loadTextureCube("kawaii","res/skybox/", ".png");
     //std::cout << skyId;
+    simpleRender->addTexture(skyId);
 
     Kawaii::TextureCube textureCube("res/skybox/", ".png");
 
@@ -207,10 +180,6 @@ int main()
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        //glfwSwapBuffers(window);
-        //glfwPollEvents();
         render.endFrame();
     }
 
