@@ -12,6 +12,7 @@
 #include "Renderer/Manager/ShaderMgr.h"
 #include "Renderer/Manager/MeshMgr.h"
 #include "Renderer/RenderDevice.h"
+#include "Renderer/RenderTarget/StaticModelRenderer.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -39,24 +40,27 @@ int main()
     Kawaii::Shader skyBoxShader("Shaders/skybox.vs", "Shaders/skybox.fs");
     Kawaii::Cube mesh(8.0f, 8.0f, 8.0f);
     Kawaii::Sphere sphere(1.0f, 36, 18);
+    
     //Kawaii::Texture2D texture("res/wall.jpg");
     unsigned int sphereMeshIndex = Kawaii::MeshMgr::getSingleton()->loadMesh(new Kawaii::Sphere(1.0f, 36, 18));
     Kawaii::FPSCamera fpsCamera(glm::vec3(0.0f, 0.0f, 3.0f));
     //printf(fpsCamera.getPosition());
     
- 
+    
     unsigned int testShader = Kawaii::ShaderMgr::getSingleton()->loadShader("test", "Shaders/shader.vs", "Shaders/shader.fs");
+    //unsigned int testShader2 = Kawaii::ShaderMgr::getSingleton()->loadShader("test", "Shaders/shader.vs", "Shaders/shader.fs");
     Kawaii::SimpleRender* simpleRender = new Kawaii::SimpleRender(testShader);
     simpleRender->addMesh(sphereMeshIndex);
-   
+    
 
     unsigned int skyId = Kawaii::TextureMgr::getSingleton()->loadTextureCube("kawaii","res/skybox/", ".png");
     //std::cout << skyId;
     simpleRender->addTexture(skyId);
 
-    Kawaii::TextureCube textureCube("res/skybox/", ".png");
-
+    //unsigned int shaderIndexMode = shaderMgr
     
+    Kawaii::StaticModelRenderer* model = new Kawaii::StaticModelRenderer(testShader, "res/nanosuit/nanosuit.obj");
+
     float skyboxVertices[] = {
         // positions          
         -1.0f,  1.0f, -1.0f,

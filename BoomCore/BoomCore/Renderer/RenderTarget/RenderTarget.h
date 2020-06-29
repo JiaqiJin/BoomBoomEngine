@@ -13,6 +13,7 @@ namespace Kawaii
 	{
 	protected:
 		bool m_instance = false;
+		Transform3D m_transformation;
 
 		unsigned int m_shaderIndex;
 		std::vector<unsigned int>m_meshIndex;

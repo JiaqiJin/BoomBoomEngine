@@ -45,7 +45,30 @@ namespace Kawaii
 
 	void SimpleRender::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
 	{
+		if (shader == nullptr)
+			shader = ShaderMgr::getSingleton()->getShader(m_shaderIndex);
+		shader->bind();
 
+		if (sunLight)
+			sunLight->setLightUniform(shader, camera);
+
+		shader->setInt("image", 0);
+
+		if (lightCamera != nullptr)
+			shader->setMat4("lightSpaceMatrix", lightCamera->getViewMatrix() * lightCamera->getProjectMatrix());
+		else
+		{
+			shader->setMat4("lightSpaceMatrix", glm::mat4(1.0f));
+		}
+
+		shader->setBool("instance", false);
+		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
+		shader->setMat4("viewMatrix", camera->getViewMatrix());
+		shader->setMat4("projectMatrix", camera->getProjectMatrix());
+		this->renderImp();
+		ShaderMgr::getSingleton()->unBindShader();
 	}
+
+
 
 }
