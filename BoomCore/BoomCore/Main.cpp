@@ -59,8 +59,8 @@ int main()
 
     //unsigned int shaderIndexMode = shaderMgr
     
-    Kawaii::StaticModelRenderer* model = new Kawaii::StaticModelRenderer(testShader, "res/nanosuit/nanosuit.obj");
-
+    Kawaii::StaticModelRenderer* myModel = new Kawaii::StaticModelRenderer(testShader, "res/nanosuit/nanosuit.obj");
+  
     float skyboxVertices[] = {
         // positions          
         -1.0f,  1.0f, -1.0f,
@@ -166,9 +166,11 @@ int main()
         
         sphere.draw(false, 0);
         */
+
         Kawaii::Shader::ptr shad = shaderMgr->getShader(testShader);
         simpleRender->testrender(&camera, shad);
-
+        //model->test
+        myModel->testrender(&camera, shad);
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         skyBoxShader.bind();

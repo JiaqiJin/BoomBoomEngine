@@ -19,7 +19,7 @@ namespace Kawaii
 		StaticModelRenderer(unsigned int shaderIndex, const std::string& path);
 		~StaticModelRenderer();
 		
-		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr) = 0;
+		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr);
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
 
 	private:
