@@ -69,6 +69,37 @@ namespace Kawaii
 		ShaderMgr::getSingleton()->unBindShader();
 	}
 
+	void SkyDome::testrender(Camera* camera, Shader::ptr shader)
+	{
+		shader->bind();
+		shader->setInt("skybox", 0);
 
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = camera->GetViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)800 / (float)600, 0.1f, 100.0f);
+
+		shader->setMat4("model", model);
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
+		shader->setVec3("cameraPos", camera->Position);
+
+		this->renderImp();
+		ShaderMgr::getSingleton()->unBindShader();
+	}
+
+	void SkyDome::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
+	{
+		if (shader == nullptr)
+			shader = ShaderMgr::getSingleton()->getShader(m_shaderIndex);
+		shader->bind();
+
+		shader->setInt("image", 0);
+		shader->setBool("instance", false);
+		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
+		shader->setMat4("viewMatrix", camera->getViewMatrix());
+		shader->setMat4("projectMatrix", camera->getProjectMatrix());
+		this->renderImp();
+		ShaderMgr::getSingleton()->unBindShader();
+	}
 
 }

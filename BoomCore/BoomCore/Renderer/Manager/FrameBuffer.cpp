@@ -24,6 +24,48 @@ namespace Kawaii
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	FrameBuffer::FrameBuffer(int width, int height, BufferType type)
+		:m_width(width), m_height(height), m_type(type)
+	{
+
+	}
+
+	GLenum FrameBuffer::getGLtype(BufferType type)
+	{
+		switch (type)
+		{
+		case Kawaii::FrameBuffer::DepthBuffer:
+			return GL_DEPTH_COMPONENT;
+			break;
+		case Kawaii::FrameBuffer::ColorBuffer:
+			return GL_RGB;
+			break;
+		case Kawaii::FrameBuffer::StencilBuffer:
+			return GL_RGB;
+			break;
+		default:
+			break;
+		}
+	}
+
+	GLenum FrameBuffer::getGLAttach(BufferType type)
+	{
+		switch (type)
+		{
+		case Kawaii::FrameBuffer::DepthBuffer:
+			return GL_DEPTH_ATTACHMENT;
+			break;
+		case Kawaii::FrameBuffer::ColorBuffer:
+			return GL_COLOR_ATTACHMENT0;
+			break;
+		case Kawaii::FrameBuffer::StencilBuffer:
+			return GL_STENCIL_ATTACHMENT;
+			break;
+		default:
+			break;
+		}
+	}
+
 	void FrameBuffer::bind()
 	{
 		glViewport(0, 0, m_width, m_height);

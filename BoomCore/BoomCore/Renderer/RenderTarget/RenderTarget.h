@@ -78,6 +78,21 @@ namespace Kawaii
 
 	};
 
+	class SkyDome : public RenderTarget
+	{
+	public:
+		typedef std::shared_ptr<SkyDome> ptr;
+
+		SkyDome(unsigned int shaderIndex)
+		{
+			m_shaderIndex = shaderIndex;
+		}
+		SkyDome() = default;
+
+		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr);
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
+	};
+
 	class SimpleRender : public RenderTarget
 	{
 	public:
