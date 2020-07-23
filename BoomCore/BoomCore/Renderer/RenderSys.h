@@ -10,11 +10,33 @@
 
 namespace Kawaii
 {
+
+	struct RenderState
+	{
+	public:
+		GLenum m_depthFunc;
+		GLenum m_polygonMode;
+		GLenum m_cullFaceMode;
+		glm::vec4 m_clearColor;
+		GLbitfield m_clearMask;
+		bool m_depthTest, m_cullFace;
+		
+		RenderState() : 
+			m_depthFunc(GL_LESS),
+			m_polygonMode(GL_FILL),
+			m_cullFaceMode(GL_BACK),
+			m_clearColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f)),
+			m_clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT),
+			m_depthTest(true), m_cullFace(true)
+		{}
+	};
+
 	class RenderSys
 	{
 	private:
 		int m_width, m_height;
 		FrameBuffer::ptr m_FrameBuffer;
+		RenderState m_renderState;
 
 		DirectionalLight::ptr m_sunLight;
 		SkyDome::ptr m_skyDome;
@@ -33,8 +55,12 @@ namespace Kawaii
 		~RenderSys() = default;
 
 		//Initization
+		void resize(int width, int height);
 		void initialize(int width, int height);
 		void setSkyDome(const std::string& path, const std::string& pFix);
+		void createSunLightCamera(glm::vec3 target, float left, float right,
+			float bottom, float top, float near, float far);
+
 		Camera3D::ptr createCamera(glm::vec3 pos, glm::vec3 target);
 
 		//getter
@@ -44,6 +70,13 @@ namespace Kawaii
 		TextureMgr::ptr getTextureMgr() { return m_textureMgr; }
 
 		//setter
+		void setPolygonMode(GLenum mode);
+		void setClearMask(GLbitfield mask);
+		void setClearColor(glm::vec4 clearColor);
+		void setCullFace(bool enable, GLenum face);
+		void setDepthTest(bool enable, GLenum func);
+		void setSunLight(glm::vec3 dir, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec);
+
 		void addRenderTarget(RenderTarget* target) { m_renderList->addRender(target); }
 
 		void render();

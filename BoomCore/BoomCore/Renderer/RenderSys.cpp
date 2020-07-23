@@ -32,6 +32,27 @@ namespace Kawaii
 		m_skyDome->addTexture(cubeTex);
 	}
 
+	void RenderSys::createSunLightCamera(glm::vec3 target, float left, float right,
+		float bottom, float top, float near, float far)
+	{
+		if (m_sunLight == nullptr)
+		{
+			std::cout << "You haven't create a light \n";
+			return;
+		}
+
+		const float length = 200.0f;
+		glm::vec3 pos = length * m_sunLight->getDirection();
+		if (m_lightCamera == nullptr)
+		{
+			FPSCamera* cam = new FPSCamera(pos);
+			m_lightCamera = std::shared_ptr<Camera3D>(cam);
+		}
+		m_lightCamera->setOrthographicProject(left, right, bottom, top, near, far);
+		FPSCamera* cam = reinterpret_cast<FPSCamera*>(m_lightCamera.get());
+		cam->lookAt(-m_sunLight->getDirection(), Camera3D::LocalUp);
+	}
+
 	Camera3D::ptr RenderSys::createCamera(glm::vec3 pos, glm::vec3 target)
 	{
 		FPSCamera* cam_ = new FPSCamera(pos);
@@ -40,13 +61,78 @@ namespace Kawaii
 		return m_camera;
 	}
 
+	void RenderSys::resize(int width, int height)
+	{
+		m_width = width;
+		m_height = height;
+		glViewport(0, 0, width, height);
+		if(m_camera != nullptr)
+			m_camera->changeAspect(static_cast<float>(width) / height);
+	}
+
 	void RenderSys::render()
 	{
 		if (m_renderList == nullptr) return;
 
 		//need add depth test, clear color etc
 
+		//polygon mode
+		glPolygonMode(GL_FRONT_AND_BACK, m_renderState.m_polygonMode);
+		//cullface setting
+		if (m_renderState.m_cullFace)
+			glEnable(GL_CULL_FACE);
+		else
+			glDisable(GL_CULL_FACE);
+		glCullFace(m_renderState.m_cullFace);
+
+		// depth testing setting.
+		if (m_renderState.m_depthTest)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
+		glDepthFunc(m_renderState.m_depthFunc);
+
+		// clearing color.
+		glClearColor(m_renderState.m_clearColor.x, m_renderState.m_clearColor.y,
+			m_renderState.m_clearColor.z, m_renderState.m_clearColor.w);
+		glClear(m_renderState.m_clearMask);
+
 		m_renderList->render(m_camera, m_sunLight, m_lightCamera);
+
+		if (m_skyDome != nullptr)
+		{
+			glDepthFunc(GL_LEQUAL);
+			glCullFace(GL_FRONT);
+			m_skyDome->render(m_camera, m_sunLight, m_lightCamera);
+		}
+
+	}
+	//Setter 
+
+	void RenderSys::setPolygonMode(GLenum mode)
+	{
+		m_renderState.m_polygonMode = mode;
+	}
+	void RenderSys::setClearMask(GLbitfield mask)
+	{
+		m_renderState.m_clearMask = mask;
+	}
+	void RenderSys::setClearColor(glm::vec4 clearColor)
+	{
+		m_renderState.m_clearColor = clearColor;
+	}
+	void RenderSys::setCullFace(bool enable, GLenum face)
+	{
+		m_renderState.m_cullFace = enable;
+		m_renderState.m_cullFaceMode = face;
+	}
+	void RenderSys::setDepthTest(bool enable, GLenum func)
+	{
+		m_renderState.m_depthTest = enable;
+		m_renderState.m_depthFunc = func;
+	}
+	void RenderSys::setSunLight(glm::vec3 dir, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec)
+	{
 
 	}
 

@@ -11,6 +11,14 @@ namespace Kawaii
 	 float RenderWindow::m_deltaTime = 0.0f;
 	 float RenderWindow::m_lastFrame = 0.0f;
 	 bool RenderWindow::m_buttonPressed[GLFW_MOUSE_BUTTON_LAST] = { 0 };
+	 template<> RenderWindow::ptr Singleton<RenderWindow>::_instance = nullptr;
+
+	 RenderWindow::ptr RenderWindow::getSingleton()
+	 {
+		 if (!_instance)
+			 _instance = std::make_shared<RenderWindow>();
+		 return _instance;
+	 }
 
 	 bool RenderWindow::initialize(std::string title, int width, int height, bool debugEnable)
 	 {
@@ -73,6 +81,10 @@ namespace Kawaii
 		 glfwSetScrollCallback(m_windowHandler, scrollCallback);
 
 		 glEnable(GL_DEPTH_TEST);
+
+		 //render sys
+		 m_renderSys = std::make_shared<RenderSys>();
+		 m_renderSys->initialize(width, height);
 	 }
 
 
