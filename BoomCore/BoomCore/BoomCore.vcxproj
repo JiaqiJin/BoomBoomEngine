@@ -170,7 +170,7 @@
     <ClCompile Include="Renderer\Manager\ShaderMgr.cpp" />
     <ClCompile Include="Renderer\Manager\Texture.cpp" />
     <ClCompile Include="Renderer\Manager\TextureMgr.cpp" />
-    <ClCompile Include="Renderer\RenderDevice.cpp" />
+    <ClCompile Include="Renderer\RenderWindow.cpp" />
     <ClCompile Include="Renderer\RenderSys.cpp" />
     <ClCompile Include="Renderer\RenderTarget\RenderTarget.cpp" />
     <ClCompile Include="Renderer\RenderTarget\StaticModelRenderer.cpp" />
@@ -201,7 +201,7 @@
     <ClInclude Include="Renderer\Manager\Singleton.h" />
     <ClInclude Include="Renderer\Manager\Texture.h" />
     <ClInclude Include="Renderer\Manager\TextureMgr.h" />
-    <ClInclude Include="Renderer\RenderDevice.h" />
+    <ClInclude Include="Renderer\RenderWindow.h" />
     <ClInclude Include="Renderer\RenderSys.h" />
     <ClInclude Include="Renderer\RenderTarget\RenderTarget.h" />
     <ClInclude Include="Renderer\RenderTarget\StaticModelRenderer.h" />

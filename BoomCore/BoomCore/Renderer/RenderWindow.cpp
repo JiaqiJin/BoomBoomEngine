@@ -1,18 +1,18 @@
-#include "RenderDevice.h"
+#include "RenderWindow.h"
 
 #include <iostream>
 
 namespace Kawaii
 {
 	// mouse pos, frame delta time, key pressed record.
-	 glm::vec2 RenderDevice::m_cursorPos;
-	 glm::vec2 RenderDevice::m_deltaCurPos;
-	 bool RenderDevice::m_keysPressed[1024] = {0};
-	 float RenderDevice::m_deltaTime = 0.0f;
-	 float RenderDevice::m_lastFrame = 0.0f;
-	 bool RenderDevice::m_buttonPressed[GLFW_MOUSE_BUTTON_LAST] = { 0 };
+	 glm::vec2 RenderWindow::m_cursorPos;
+	 glm::vec2 RenderWindow::m_deltaCurPos;
+	 bool RenderWindow::m_keysPressed[1024] = {0};
+	 float RenderWindow::m_deltaTime = 0.0f;
+	 float RenderWindow::m_lastFrame = 0.0f;
+	 bool RenderWindow::m_buttonPressed[GLFW_MOUSE_BUTTON_LAST] = { 0 };
 
-	 bool RenderDevice::initialize(std::string title, int width, int height, bool debugEnable)
+	 bool RenderWindow::initialize(std::string title, int width, int height, bool debugEnable)
 	 {
 		 m_width = width;
 		 m_height = height;
@@ -76,7 +76,7 @@ namespace Kawaii
 	 }
 
 
-	 bool RenderDevice::run()
+	 bool RenderWindow::run()
 	 {
 		 if (m_windowHandler == nullptr)
 		 {
@@ -86,13 +86,13 @@ namespace Kawaii
 		 return !glfwWindowShouldClose(m_windowHandler);
 	 }
 
-	 void RenderDevice::beginFrame()
+	 void RenderWindow::beginFrame()
 	 {
 		 processInput();
 	 }
 
 
-	 void RenderDevice::endFrame()
+	 void RenderWindow::endFrame()
 	 {
 		 // deleta time calculation.
 		 float currentFrame = glfwGetTime();
@@ -104,14 +104,14 @@ namespace Kawaii
 
 	 }
 
-	 bool RenderDevice::shutdown()
+	 bool RenderWindow::shutdown()
 	 {
 		 glfwTerminate();
 		 return false;
 	 }
 
 
-	 void RenderDevice::glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
+	 void RenderWindow::glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 		 GLsizei length, const GLchar* message, const void* userParam)
 	 {
 		 if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
@@ -156,7 +156,7 @@ namespace Kawaii
 	 }
 
 
-	 void RenderDevice::initializeDebugContex()
+	 void RenderWindow::initializeDebugContex()
 	 {
 		 GLint flags;
 		 glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
@@ -171,7 +171,7 @@ namespace Kawaii
 		 }
 	 }
 	 
-	 void RenderDevice::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
+	 void RenderWindow::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 	 {
 		 static bool first = true;
 		 if ((!m_buttonPressed[GLFW_MOUSE_BUTTON_LEFT] && !m_buttonPressed[GLFW_MOUSE_BUTTON_RIGHT]))
@@ -192,7 +192,7 @@ namespace Kawaii
 		 m_cursorPos = glm::vec2(xpos, ypos);
 	 }
 
-	 void RenderDevice::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+	 void RenderWindow::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	 {
 		 if (action == GLFW_PRESS)
 			 m_buttonPressed[button] = true;
@@ -200,7 +200,7 @@ namespace Kawaii
 			 m_buttonPressed[button] = false;
 	 }
 
-	 void RenderDevice::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	 void RenderWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	 {
 		 if (action == GLFW_PRESS)
 			 m_keysPressed[key] = true;
@@ -208,17 +208,17 @@ namespace Kawaii
 			 m_keysPressed[key] = false;
 	 }
 
-	 void RenderDevice::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+	 void RenderWindow::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 	 {
 		
 	 }
 
-	 void RenderDevice::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	 void RenderWindow::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	 {
 		
 	 }
 
-	 void RenderDevice::processInput()
+	 void RenderWindow::processInput()
 	 {
 		 // shutdown.
 		 if (glfwGetKey(m_windowHandler, GLFW_KEY_ESCAPE) == GLFW_PRESS)

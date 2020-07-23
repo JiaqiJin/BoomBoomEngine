@@ -8,7 +8,7 @@
 
 namespace Kawaii
 {
-	class RenderDevice
+	class RenderWindow
 	{
 	private:
 		bool m_debugMode;
@@ -25,8 +25,8 @@ namespace Kawaii
 		static float m_deltaTime, m_lastFrame;
 		static bool m_buttonPressed[GLFW_MOUSE_BUTTON_LAST];
 
-		RenderDevice() = default;
-		~RenderDevice() = default;
+		RenderWindow() = default;
+		~RenderWindow() = default;
 
 		bool initialize(std::string title, int width, int height, bool debugEnable = false);
 		bool run();

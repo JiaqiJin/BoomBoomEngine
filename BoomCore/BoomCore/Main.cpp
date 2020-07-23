@@ -11,7 +11,7 @@
 #include "Renderer/RenderTarget/RenderTarget.h"
 #include "Renderer/Manager/ShaderMgr.h"
 #include "Renderer/Manager/MeshMgr.h"
-#include "Renderer/RenderDevice.h"
+#include "Renderer/RenderWindow.h"
 #include "Renderer/RenderTarget/StaticModelRenderer.h"
 
 // settings
@@ -32,7 +32,7 @@ float lastFrame = 0.0f;
 int main()
 {
    
-    Kawaii::RenderDevice render;
+    Kawaii::RenderWindow render;
     render.initialize("BoomBoomEngine", SCR_WIDTH, SCR_HEIGHT);
     //glEnable(GL_DEPTH_TEST);
 

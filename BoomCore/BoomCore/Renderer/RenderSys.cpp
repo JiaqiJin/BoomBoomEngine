@@ -1,5 +1,8 @@
 #include "RenderSys.h"
 
+#include "Camera/FPSCamera.h"
+#include "Camera/TPSCamera.h"
+
 namespace Kawaii
 {
 	void RenderSys::initialize(int width, int height)
@@ -10,7 +13,7 @@ namespace Kawaii
 		m_meshMgr = MeshMgr::getSingleton();
 		m_shaderMgr = ShaderMgr::getSingleton();
 		m_textureMgr = TextureMgr::getSingleton();
-		m_renderList = std::make_shared<RenderSys>();
+		m_renderList = std::make_shared<RenderTargetList>();
 
 	}
 
@@ -27,6 +30,24 @@ namespace Kawaii
 		m_skyDome = std::make_shared<SkyDome>(skyboxShader);
 		m_skyDome->addMesh(meshIndex);
 		m_skyDome->addTexture(cubeTex);
+	}
+
+	Camera3D::ptr RenderSys::createCamera(glm::vec3 pos, glm::vec3 target)
+	{
+		FPSCamera* cam_ = new FPSCamera(pos);
+		cam_->lookAt(glm::normalize(target - pos), Camera3D::LocalUp);
+		m_camera = std::shared_ptr<Camera3D>(cam_);
+		return m_camera;
+	}
+
+	void RenderSys::render()
+	{
+		if (m_renderList == nullptr) return;
+
+		//need add depth test, clear color etc
+
+		m_renderList->render(m_camera, m_sunLight, m_lightCamera);
+
 	}
 
 }
