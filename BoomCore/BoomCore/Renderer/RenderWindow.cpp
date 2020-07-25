@@ -85,6 +85,8 @@ namespace Kawaii
 		 //render sys
 		 m_renderSys = std::make_shared<RenderSys>();
 		 m_renderSys->initialize(width, height);
+
+		 return true;
 	 }
 
 
@@ -222,12 +224,12 @@ namespace Kawaii
 
 	 void RenderWindow::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 	 {
-		
+		 getSingleton()->getRenderSys()->resize(width, height);
 	 }
 
 	 void RenderWindow::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	 {
-		
+		 getSingleton()->getRenderSys()->getCamera()->onWheelMove(yoffset);
 	 }
 
 	 void RenderWindow::processInput()
@@ -236,18 +238,27 @@ namespace Kawaii
 		 if (glfwGetKey(m_windowHandler, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			 glfwSetWindowShouldClose(m_windowHandler, true);
 
-		 if (glfwGetKey(m_windowHandler, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-			 glfwSetWindowShouldClose(m_windowHandler, true);
+		 RenderWindow::ptr window = getSingleton();
 
-		 if (glfwGetKey(m_windowHandler, GLFW_KEY_W) == GLFW_PRESS)
-			 m_camera->ProcessKeyboard(FORWARD, m_deltaTime);
-		 if (glfwGetKey(m_windowHandler, GLFW_KEY_S) == GLFW_PRESS)
-			 m_camera->ProcessKeyboard(BACKWARD, m_deltaTime);
-		 if (glfwGetKey(m_windowHandler, GLFW_KEY_A) == GLFW_PRESS)
-			 m_camera->ProcessKeyboard(LEFT, m_deltaTime);
-		 if (glfwGetKey(m_windowHandler, GLFW_KEY_D) == GLFW_PRESS)
-			 m_camera->ProcessKeyboard(RIGHT, m_deltaTime);
-		
+		 // key pressed action.
+		 if (m_keysPressed[GLFW_KEY_W])
+			 window->getRenderSys()->getCamera()->onKeyPress(m_deltaTime, 'W');
+		 if (m_keysPressed[GLFW_KEY_A])
+			 window->getRenderSys()->getCamera()->onKeyPress(m_deltaTime, 'A');
+		 if (m_keysPressed[GLFW_KEY_S])
+			 window->getRenderSys()->getCamera()->onKeyPress(m_deltaTime, 'S');
+		 if (m_keysPressed[GLFW_KEY_D])
+			 window->getRenderSys()->getCamera()->onKeyPress(m_deltaTime, 'D');
+		 if (m_keysPressed[GLFW_KEY_Q])
+			 window->getRenderSys()->getCamera()->onKeyPress(m_deltaTime, 'Q');
+		 if (m_keysPressed[GLFW_KEY_E])
+			 window->getRenderSys()->getCamera()->onKeyPress(m_deltaTime, 'E');
+
+		 // mouse action.
+		 if (m_buttonPressed[GLFW_MOUSE_BUTTON_LEFT])
+			 window->getRenderSys()->getCamera()->onMouseMove(m_deltaCurPos.x, m_deltaCurPos.y, "LEFT");
+		 else if (m_buttonPressed[GLFW_MOUSE_BUTTON_RIGHT])
+			 window->getRenderSys()->getCamera()->onMouseMove(m_deltaCurPos.x, m_deltaCurPos.y, "RIGHT");
 		 m_deltaCurPos = glm::vec2(0.0f);
 	 }
 
