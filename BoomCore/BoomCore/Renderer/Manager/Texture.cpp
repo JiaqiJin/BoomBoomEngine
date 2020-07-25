@@ -8,31 +8,6 @@
 
 namespace Kawaii
 {
-	Texture2D::Texture2D(unsigned char* images, int width, int height, int channel)
-		:m_width(width), m_height(height), m_channel(channel)
-	{
-		// texture unit generation.
-		glGenTextures(1, &m_id);
-		glBindTexture(GL_TEXTURE_2D, m_id);
-		// filter setting.
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// load the image.
-		GLenum format;
-		if (m_channel == 1)
-			format = GL_RED;
-		else if (m_channel == 3)
-			format = GL_RGB;
-		else if (m_channel == 4)
-			format = GL_RGBA;
-		glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height,
-			0, format, GL_UNSIGNED_BYTE, images);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
 	Texture2D::Texture2D(const std::string& path, glm::vec4 bColor)
 	{
 		m_borderColor = bColor;
@@ -168,47 +143,45 @@ namespace Kawaii
 		glDeleteTextures(1, &m_id);
 	}
 
-	TextureColor::TextureColor(int width, int height, bool hdr)
-		:m_width(width), m_height(height), m_hdr(hdr)
+	TextureDepth::TextureDepth(int width, int height)
+		:m_width(width), m_height(height)
 	{
 		setupTexture("", "");
 	}
 
-	TextureColor::~TextureColor()
+	TextureDepth::~TextureDepth()
 	{
 		clearTexture();
 	}
 
-	void TextureColor::bind(unsigned int unit)
+	void TextureDepth::bind(unsigned int unit)
 	{
 		glActiveTexture(GL_TEXTURE0 + unit);
 		glBindTexture(GL_TEXTURE_2D, m_id);
 	}
 
-	void TextureColor::unBind()
+	void TextureDepth::unBind()
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void TextureColor::setupTexture(const std::string& path, const std::string& pFix)
+	void TextureDepth::setupTexture(const std::string& path, const std::string& pFix)
 	{
 		// generate depth buffer.
 		glGenTextures(1, &m_id);
 		glBindTexture(GL_TEXTURE_2D, m_id);
-		if (!m_hdr)
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height,0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-		else
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_width, m_height,0, GL_RGB, GL_FLOAT, nullptr);//floating point
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		// here must be GL_NEAREST, otherwise there is a bug.
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+			m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void TextureColor::clearTexture()
+	void TextureDepth::clearTexture()
 	{
 		glDeleteTextures(1, &m_id);
 	}

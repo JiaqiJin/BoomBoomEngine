@@ -17,47 +17,38 @@ namespace Kawaii
 		loadModel(path);
 	}
 
-	StaticModelRenderer::~StaticModelRenderer() 
+	StaticModelRenderer::~StaticModelRenderer()
 	{
 	}
 
-	void StaticModelRenderer::testrender(Camera* camera, Shader::ptr shader)
+	void StaticModelRenderer::render(Camera3D::ptr camera, Light::ptr sunLight,
+		Camera3D::ptr lightCamera, Shader::ptr shader)
 	{
-		shader->bind();
-		shader->setInt("skybox", 0);
-
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 view = camera->GetViewMatrix();
-		glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)800 / (float)600, 0.1f, 100.0f);
-
-		shader->setMat4("model", model);
-		shader->setMat4("view", view);
-		shader->setMat4("projection", projection);
-		shader->setVec3("cameraPos", camera->Position);
-
-		this->renderImp();
-		ShaderMgr::getSingleton()->unBindShader();
-	}
-
-	void StaticModelRenderer::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
-	{
+		// render the model.
+		if (!m_visiable) return;
 		if (shader == nullptr)
+		{
 			shader = ShaderMgr::getSingleton()->getShader(m_shaderIndex);
-		shader->bind();
-
+			shader->bind();
+		}
 		if (sunLight)
 			sunLight->setLightUniform(shader, camera);
-
 		shader->setInt("image", 0);
-
-		if (lightCamera != nullptr)
-			shader->setMat4("lightSpaceMatrix", lightCamera->getViewMatrix() * lightCamera->getProjectMatrix());
-		else
+		// depth map.
+		Texture::ptr depthMap = TextureMgr::getSingleton()->getTexture("shadowDepth");
+		if (depthMap != nullptr)
 		{
-			shader->setMat4("lightSpaceMatrix", glm::mat4(1.0f));
+			shader->setInt("depthMap", 1);
+			depthMap->bind(1);
 		}
-
+		if (lightCamera != nullptr)
+			shader->setMat4("lightSpaceMatrix",
+				lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
+		else
+			shader->setMat4("lightSpaceMatrix", glm::mat4(1.0f));
+		// object matrix.
 		shader->setBool("instance", false);
+		shader->setBool("receiveShadow", m_receiveShadow);
 		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
 		shader->setMat4("viewMatrix", camera->getViewMatrix());
 		shader->setMat4("projectMatrix", camera->getProjectMatrix());
@@ -67,6 +58,9 @@ namespace Kawaii
 
 	void StaticModelRenderer::loadModel(const std::string& path)
 	{
+		// load the model file.
+		m_min = glm::vec3(+FLT_MAX);
+		m_max = glm::vec3(-FLT_MAX);
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate
 			| aiProcess_FlipUVs | aiProcess_GenNormals);
@@ -121,7 +115,25 @@ namespace Kawaii
 				vertex.texcoord = glm::vec2(0.0f, 0.0f);
 			vertex.color = vertex.normal;
 			vertices.push_back(vertex);
-			
+			// bounding box.
+			if (mesh->mVertices[x].x < m_min.x)
+				m_min.x = mesh->mVertices[x].x;
+			if (mesh->mVertices[x].y < m_min.y)
+				m_min.y = mesh->mVertices[x].y;
+			if (mesh->mVertices[x].z < m_min.z)
+				m_min.z = mesh->mVertices[x].z;
+			if (mesh->mVertices[x].x > m_max.x)
+				m_max.x = mesh->mVertices[x].x;
+			if (mesh->mVertices[x].y > m_max.y)
+				m_max.y = mesh->mVertices[x].y;
+			if (mesh->mVertices[x].z > m_max.z)
+				m_max.z = mesh->mVertices[x].z;
+			//m_min.x = std::min(m_min.x, mesh->mVertices[x].x);
+			//m_min.y = std::min(m_min.y, mesh->mVertices[x].y);
+			//m_min.z = std::min(m_min.z, mesh->mVertices[x].z);
+			//m_max.x = std::max(m_max.x, mesh->mVertices[x].x);
+			//m_max.y = std::max(m_max.y, mesh->mVertices[x].y);
+			//m_max.z = std::max(m_max.z, mesh->mVertices[x].z);
 		}
 
 		for (unsigned int x = 0; x < mesh->mNumFaces; ++x)
@@ -146,5 +158,6 @@ namespace Kawaii
 			texIndex = textureMgr->loadTexture2D(name, m_directory + "/" + name);
 		}
 	}
+
 
 }

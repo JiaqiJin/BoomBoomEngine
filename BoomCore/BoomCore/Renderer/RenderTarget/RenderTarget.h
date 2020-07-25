@@ -13,36 +13,44 @@ namespace Kawaii
 	{
 	protected:
 		bool m_instance = false;
+		bool m_receiveShadow = true;
+		bool m_visiable = true;
+		int m_instanceNum = 0;
 		Transform3D m_transformation;
 
 		unsigned int m_shaderIndex;
-		std::vector<unsigned int>m_meshIndex;
-		std::vector<unsigned int>m_texIndex;
+		std::vector<unsigned int> m_texIndex;
+		std::vector<unsigned int> m_meshIndex;
 
 	public:
 		typedef std::shared_ptr<RenderTarget> ptr;
 
 		RenderTarget() = default;
 		virtual ~RenderTarget() = default;
-		
-		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr) = 0;
-		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,Shader::ptr shader = nullptr) = 0;
 
-		void addMesh(unsigned int meshIndex) 
-		{ 
-			m_meshIndex.push_back(meshIndex);
-		}
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr) = 0;
+
+		void setVisiable(bool target) { m_visiable = target; }
+		void setReceiveShadow(bool target) { m_receiveShadow = target; }
 
 		void addTexture(unsigned int texIndex)
 		{
 			m_texIndex.push_back(texIndex);
 		}
 
+		void addMesh(unsigned int meshIndex)
+		{
+			m_meshIndex.push_back(meshIndex);
+		}
+
+		Transform3D* getTransformation()
+		{
+			return &m_transformation;
+		}
 
 	protected:
 		void renderImp();
 	};
-
 
 	class RenderTargetList : public RenderTarget
 	{
@@ -62,18 +70,10 @@ namespace Kawaii
 			return m_list.size() - 1;
 		}
 
-		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr)
-		{
-			for (auto& it : m_list)
-				it->testrender(camera, shader);
-		}
-
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr)
 		{
 			for (auto& it : m_list)
-			{
 				it->render(camera, sunLight, lightCamera, shader);
-			}
 		}
 
 	};
@@ -87,15 +87,16 @@ namespace Kawaii
 		{
 			m_shaderIndex = shaderIndex;
 		}
+
 		SkyDome() = default;
 
-		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr);
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
 	};
 
 	class SimpleRender : public RenderTarget
 	{
 	public:
+
 		SimpleRender(unsigned int shaderIndex)
 		{
 			m_shaderIndex = shaderIndex;
@@ -103,9 +104,7 @@ namespace Kawaii
 
 		~SimpleRender() = default;
 
-		virtual void testrender(Camera* camera, Shader::ptr shader = nullptr);
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
 	};
-
 
 }

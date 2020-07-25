@@ -7,57 +7,34 @@
 
 namespace Kawaii
 {
-	const GLenum ColorAttachments[] =
-	{
-		GL_COLOR_ATTACHMENT0,
-		GL_COLOR_ATTACHMENT1,
-		GL_COLOR_ATTACHMENT2,
-		GL_COLOR_ATTACHMENT3,
-		GL_COLOR_ATTACHMENT4,
-		GL_COLOR_ATTACHMENT5,
-		GL_COLOR_ATTACHMENT6,
-		GL_COLOR_ATTACHMENT7
-	};
-
 	class FrameBuffer
 	{
 	public:
-		enum BufferType
-		{
-			DepthBuffer,
-			ColorBuffer,
-			StencilBuffer
-		};
+		enum BufferType { DepthBuffer, ColorBuffer, StencilBuffer };
 
 	private:
 		unsigned int m_id;
-		int m_width, m_height;
 		BufferType m_type;
+		int m_width, m_height;
 		unsigned int m_depthIndex;
-		std::vector<unsigned int> m_colorTexIndex;
 
 	public:
 		typedef std::shared_ptr<FrameBuffer> ptr;
 
-		FrameBuffer(int width, int height, const std::vector<std::string>& colorName);
-		FrameBuffer(int width, int height, BufferType type);
-		virtual ~FrameBuffer() { clearFramebuffer(); }
-		
-		void bind();
-		void unBind(int width = -1, int height = -1);
 
-		int getWidth() const { return m_width; }
-		int getHeight() const { return m_height; }
+		FrameBuffer(int width, int height, BufferType type);
+		virtual ~FrameBuffer() = default;
+
 		static GLenum getGLtype(BufferType type);
 		static GLenum getGLAttach(BufferType type);
-		unsigned int getFramebufferId()const { return m_id; }
 
+		void bind();
+		static void unBind(int width, int height);
 
 	private:
-		void setupColorFramebuffer(const std::string& name, unsigned int attachIdx);
+		void setupDepthFramebuffer();
 		void clearFramebuffer();
 	};
-
 
 }
 

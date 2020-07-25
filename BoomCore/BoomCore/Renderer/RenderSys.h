@@ -20,8 +20,8 @@ namespace Kawaii
 		glm::vec4 m_clearColor;
 		GLbitfield m_clearMask;
 		bool m_depthTest, m_cullFace;
-		
-		RenderState() : 
+
+		RenderState() :
 			m_depthFunc(GL_LESS),
 			m_polygonMode(GL_FILL),
 			m_cullFaceMode(GL_BACK),
@@ -34,13 +34,16 @@ namespace Kawaii
 	class RenderSys
 	{
 	private:
-		int m_width, m_height;
-		FrameBuffer::ptr m_FrameBuffer;
-		RenderState m_renderState;
-
-		DirectionalLight::ptr m_sunLight;
+		// skydome.
 		SkyDome::ptr m_skyDome;
+		DirectionalLight::ptr m_sunLight;
 
+		// render state.
+		RenderState m_renderState;
+		int m_width, m_height;
+		FrameBuffer::ptr m_shadowDepthBuffer;
+
+		// manager.
 		MeshMgr::ptr m_meshMgr;
 		Camera3D::ptr m_camera;
 		Camera3D::ptr m_lightCamera;
@@ -50,38 +53,39 @@ namespace Kawaii
 
 	public:
 		typedef std::shared_ptr<RenderSys> ptr;
-	
+
+		// ctor/dtor
 		RenderSys() = default;
 		~RenderSys() = default;
 
-		//Initization
+		// Initialization.
 		void resize(int width, int height);
 		void initialize(int width, int height);
-		void setSkyDome(const std::string& path, const std::string& pFix);
+		void createShadowDepthBuffer(int width, int height);
 		void createSunLightCamera(glm::vec3 target, float left, float right,
 			float bottom, float top, float near, float far);
+		void setSkyDome(const std::string& path, const std::string& pFix);
+		Camera3D::ptr createFPSCamera(glm::vec3 pos, glm::vec3 target);
+		Camera3D::ptr createTPSCamera(glm::vec3 pos, glm::vec3 target);
 
-		Camera3D::ptr createCamera(glm::vec3 pos, glm::vec3 target);
-
-		//getter
+		// Getter.
 		Camera3D::ptr getCamera() { return m_camera; }
 		MeshMgr::ptr getMeshMgr() { return m_meshMgr; }
 		ShaderMgr::ptr getShaderMgr() { return m_shaderMgr; }
 		TextureMgr::ptr getTextureMgr() { return m_textureMgr; }
 
-		//setter
+		// Setter.
 		void setPolygonMode(GLenum mode);
 		void setClearMask(GLbitfield mask);
 		void setClearColor(glm::vec4 clearColor);
 		void setCullFace(bool enable, GLenum face);
 		void setDepthTest(bool enable, GLenum func);
-		void setSunLight(glm::vec3 dir, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec);
-
 		void addRenderTarget(RenderTarget* target) { m_renderList->addRender(target); }
+		void setSunLight(glm::vec3 dir, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec);
 
 		void render();
 
 	private:
-
+		
 	};
 }

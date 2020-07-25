@@ -9,22 +9,19 @@ namespace Kawaii
 
 	void RenderTarget::renderImp()
 	{
-		//render all mesh
+		// render each mesh.
 		MeshMgr::ptr meshMgr = MeshMgr::getSingleton();
 		TextureMgr::ptr textureMgr = TextureMgr::getSingleton();
-
-		for (unsigned int x = 0; x < m_meshIndex.size(); x++)
+		for (int x = 0; x < m_meshIndex.size(); ++x)
 		{
 			if (x < m_texIndex.size())
-				textureMgr->bindTexture(m_texIndex[x], x);
+				textureMgr->bindTexture(m_texIndex[x], 0);
 			else
 				textureMgr->unBindTexture(m_texIndex[x]);
-
-			meshMgr->drawMesh(m_meshIndex[x], m_instance, 0);
+			meshMgr->drawMesh(m_meshIndex[x], m_instance, m_instanceNum);
 		}
-
 	}
-
+	/*
 	void SimpleRender::testrender(Camera* camera, Shader::ptr shader)
 	{
 		shader->bind();
@@ -42,33 +39,38 @@ namespace Kawaii
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
 	}
-
+	*/
 	void SimpleRender::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
 	{
 		if (shader == nullptr)
 			shader = ShaderMgr::getSingleton()->getShader(m_shaderIndex);
 		shader->bind();
-
 		if (sunLight)
 			sunLight->setLightUniform(shader, camera);
-
 		shader->setInt("image", 0);
-
-		if (lightCamera != nullptr)
-			shader->setMat4("lightSpaceMatrix", lightCamera->getViewMatrix() * lightCamera->getProjectMatrix());
-		else
+		// depth map.
+		Texture::ptr depthMap = TextureMgr::getSingleton()->getTexture("shadowDepth");
+		if (depthMap != nullptr)
 		{
-			shader->setMat4("lightSpaceMatrix", glm::mat4(1.0f));
+			shader->setInt("depthMap", 1);
+			depthMap->bind(1);
 		}
-
+		// light space matrix.
+		if (lightCamera != nullptr)
+			shader->setMat4("lightSpaceMatrix",
+				lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
+		else
+			shader->setMat4("lightSpaceMatrix", glm::mat4(1.0f));
+		// object matrix.
 		shader->setBool("instance", false);
+		shader->setBool("receiveShadow", m_receiveShadow);
 		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
 		shader->setMat4("viewMatrix", camera->getViewMatrix());
 		shader->setMat4("projectMatrix", camera->getProjectMatrix());
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
 	}
-
+	/*
 	void SkyDome::testrender(Camera* camera, Shader::ptr shader)
 	{
 		shader->bind();
@@ -86,7 +88,7 @@ namespace Kawaii
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
 	}
-
+	*/
 	void SkyDome::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
 	{
 		if (shader == nullptr)
@@ -95,6 +97,7 @@ namespace Kawaii
 
 		shader->setInt("image", 0);
 		shader->setBool("instance", false);
+		shader->setBool("receiveShadow", m_receiveShadow);
 		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
 		shader->setMat4("viewMatrix", camera->getViewMatrix());
 		shader->setMat4("projectMatrix", camera->getProjectMatrix());

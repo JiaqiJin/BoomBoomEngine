@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 #include "Camera/Camera.h"
+
 #include "RenderSys.h"
 #include "Manager/Singleton.h"
 
@@ -34,32 +35,27 @@ namespace Kawaii
 		RenderWindow() = default;
 		~RenderWindow() = default;
 
-		bool initialize(std::string title, int width, int height, bool debugEnable = false);
+		//! singleton instance.
+		static  RenderWindow::ptr getSingleton();
+
+		bool initialize(std::string title, int width, int height);
 		bool run();
-		bool shutdown();
 		void beginFrame();
 		void endFrame();
+		bool shutdown();
 
-		int getWindowWidth()const { return m_width; }
-		int getWindowHeight()const { return m_height; }
-
-		static RenderWindow::ptr getSingleton();
-
-		RenderSys::ptr getRenderSys() const
+		RenderSys::ptr getRenderSystem() const
 		{
 			return m_renderSys;
 		}
 
 	protected:
-		void initializeDebugContex();
-		static void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
-			GLsizei length, const GLchar* message, const void* userParam);
-
-		static void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
-		static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
-		static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+		// callback functions.
+		static void cursorPositionCallback(GLFWwindow * window, double xpos, double ypos);
+		static void mouseButtonCallback(GLFWwindow * window, int button, int action, int mods);
+		static void keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
+		static void framebufferSizeCallback(GLFWwindow * window, int width, int height);
+		static void scrollCallback(GLFWwindow * window, double xoffset, double yoffset);
 		void processInput();
 	};
 

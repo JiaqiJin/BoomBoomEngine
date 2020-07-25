@@ -9,7 +9,7 @@ namespace Kawaii
 	class Texture
 	{
 	protected:
-		std::string names;
+		std::string m_name;
 		unsigned int m_id;
 
 	public:
@@ -17,8 +17,8 @@ namespace Kawaii
 
 		Texture() = default;
 		virtual ~Texture() = default;
-		
-		virtual void bind(unsigned int uint) = 0;
+
+		virtual void bind(unsigned int unit) = 0;
 		virtual void unBind() = 0;
 
 		unsigned int getTextureId() { return m_id; }
@@ -26,6 +26,7 @@ namespace Kawaii
 	private:
 		virtual void setupTexture(const std::string& path, const std::string& pFix) = 0;
 		virtual void clearTexture() = 0;
+
 	};
 
 	class Texture2D : public Texture
@@ -37,7 +38,6 @@ namespace Kawaii
 	public:
 		typedef std::shared_ptr<Texture2D> ptr;
 
-		Texture2D(unsigned char* images, int width, int height, int channel);
 		Texture2D(const std::string& path, glm::vec4 bColor = glm::vec4(1.0f));
 		~Texture2D();
 
@@ -63,15 +63,14 @@ namespace Kawaii
 		virtual void clearTexture();
 	};
 
-	class TextureColor : public Texture
+	class TextureDepth : public Texture
 	{
 	private:
-		bool m_hdr;
 		int m_width, m_height;
 
 	public:
-		TextureColor(int width, int height, bool hdr = false);
-		~TextureColor();
+		TextureDepth(int width, int height);
+		~TextureDepth();
 
 		virtual void bind(unsigned int unit);
 		virtual void unBind();

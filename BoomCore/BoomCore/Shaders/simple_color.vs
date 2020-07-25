@@ -12,8 +12,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectMatrix;
 
-int main()
-{
+void main(){
 	Texcoord = texcoord;
 	Normal = normal;
 	Color = color;

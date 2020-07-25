@@ -1,98 +1,71 @@
 #include "FrameBuffer.h"
-#include "Texture.h"
+#include "TextureMgr.h"
 #include <iostream>
 
 namespace Kawaii
 {
-	FrameBuffer::FrameBuffer(int width, int height,const std::vector<std::string>& colorName)
-		:m_width(width), m_height(height)
-	{
-		glGenFramebuffers(1, &m_id);
-
-		//color attachment
-		m_colorTexIndex.resize(colorName.size());
-		for (int x = 0; x < colorName.size(); x++)
-			setupColorFramebuffer(colorName[x], x);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, m_id);
-		if (colorName.size() > 0)
-		{
-			glDrawBuffers(colorName.size(), ColorAttachments);
-		}
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			std::cout << "Framebuffer not complete!" << std::endl;
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
 	FrameBuffer::FrameBuffer(int width, int height, BufferType type)
 		:m_width(width), m_height(height), m_type(type)
 	{
-
+		setupDepthFramebuffer();
 	}
 
 	GLenum FrameBuffer::getGLtype(BufferType type)
 	{
 		switch (type)
 		{
-		case Kawaii::FrameBuffer::DepthBuffer:
+		case DepthBuffer:
 			return GL_DEPTH_COMPONENT;
-			break;
-		case Kawaii::FrameBuffer::ColorBuffer:
+		case ColorBuffer:
 			return GL_RGB;
-			break;
-		case Kawaii::FrameBuffer::StencilBuffer:
+		case StencilBuffer:
 			return GL_RGB;
-			break;
-		default:
-			break;
 		}
+		return GL_RGB;
 	}
 
 	GLenum FrameBuffer::getGLAttach(BufferType type)
 	{
 		switch (type)
 		{
-		case Kawaii::FrameBuffer::DepthBuffer:
+		case DepthBuffer:
 			return GL_DEPTH_ATTACHMENT;
-			break;
-		case Kawaii::FrameBuffer::ColorBuffer:
+		case ColorBuffer:
 			return GL_COLOR_ATTACHMENT0;
-			break;
-		case Kawaii::FrameBuffer::StencilBuffer:
+		case StencilBuffer:
 			return GL_STENCIL_ATTACHMENT;
-			break;
-		default:
-			break;
 		}
+		return GL_COLOR_ATTACHMENT0;
 	}
 
 	void FrameBuffer::bind()
 	{
 		glViewport(0, 0, m_width, m_height);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
 	void FrameBuffer::unBind(int width, int height)
 	{
-		if (width == -1)width = m_width;
-		if (height == -1)height = m_height;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, width, height);
+	}
+
+	void FrameBuffer::setupDepthFramebuffer()
+	{
+		TextureMgr::ptr textureMgr = TextureMgr::getSingleton();
+		m_depthIndex = textureMgr->loadTextureDepth("shadowDepth", m_width, m_height);
+		glGenFramebuffers(1, &m_id);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+			GL_TEXTURE_2D, textureMgr->getTexture(m_depthIndex)->getTextureId(), 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void FrameBuffer::clearFramebuffer()
 	{
 		glDeleteFramebuffers(1, &m_id);
 	}
-
-
-	void FrameBuffer::setupColorFramebuffer(const std::string& name, unsigned int attachIdx)
-	{
-		Kawaii::Texture2D::ptr texture;
-		
-		glBindFramebuffer(GL_FRAMEBUFFER, m_id);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachIdx, GL_TEXTURE_2D, texture->getTextureId(), 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
 }

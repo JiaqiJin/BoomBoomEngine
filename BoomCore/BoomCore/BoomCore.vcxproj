@@ -156,7 +156,6 @@
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
     <ClCompile Include="ImGui\imgui_impl_glfw_gl3.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Renderer\Camera\Camera3D.cpp" />
     <ClCompile Include="Renderer\Camera\FPSCamera.cpp" />
     <ClCompile Include="Renderer\Camera\TPSCamera.cpp" />
@@ -176,6 +175,7 @@
     <ClCompile Include="Renderer\RenderTarget\RenderTarget.cpp" />
     <ClCompile Include="Renderer\RenderTarget\StaticModelRenderer.cpp" />
     <ClCompile Include="stb_image.c" />
+    <ClCompile Include="TestMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\Dialog.h" />
