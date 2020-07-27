@@ -209,8 +209,8 @@
     <ClInclude Include="Renderer\RenderSys.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\blinn_phong.fs" />
-    <None Include="Shaders\blinn_phong.vs" />
+    <None Include="Shaders\reflect.fs" />
+    <None Include="Shaders\reflect.vs" />
     <None Include="Shaders\shader.fs" />
     <None Include="Shaders\shader.vs" />
     <None Include="Shaders\simple_color.fs" />

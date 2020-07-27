@@ -24,7 +24,7 @@ namespace Kawaii
 		m_meshMgr = MeshMgr::getSingleton();
 		m_shaderMgr = ShaderMgr::getSingleton();
 		m_textureMgr = TextureMgr::getSingleton();
-		m_renderList = std::make_shared<DrawableList>();
+		m_renderList = std::make_shared<RenderTargetList>();
 		
 	}
 
@@ -57,12 +57,6 @@ namespace Kawaii
 		TPSCamera* _cam = new TPSCamera(target, 0.0f, 30.0f, 3.0f);
 		m_camera = std::shared_ptr<Camera3D>(_cam);
 		return m_camera;
-	}
-
-	void RenderSys::createShadowDepthBuffer(int width, int height)
-	{
-		FrameBuffer* framebuf = new FrameBuffer(width, height, FrameBuffer::DepthBuffer);
-		m_shadowDepthBuffer = std::shared_ptr<FrameBuffer>(framebuf);
 	}
 
 	void RenderSys::createSunLightCamera(glm::vec3 target, float left, float right,

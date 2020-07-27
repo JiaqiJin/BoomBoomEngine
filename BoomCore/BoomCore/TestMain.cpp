@@ -25,6 +25,8 @@ int main()
 	// shaders.
 	unsigned int simpleColorShader = shaderMgr->loadShader("simple_color",
 		"Shaders/simple_color.vs", "Shaders/simple_color.fs");
+	unsigned int lightShader = shaderMgr->loadShader("Direclight",
+		"Shaders/reflect.vs", "Shaders/reflect.fs");
 	// textures.
 	unsigned int tex1 = textureMgr->loadTexture2D("floor", "res/floor.jpg");
 	unsigned int cube1 = textureMgr->loadTexture2D("cube", "res/cube.jpg");
@@ -40,17 +42,17 @@ int main()
 		glm::vec3(0.2f), glm::vec3(0.5f), glm::vec3(0.6f));
 
 	// add drawable objects.
-	RenderTarget* floor = new SimpleObject(simpleColorShader);
+	RenderTarget* floor = new SimpleObject(lightShader);
 	floor->addMesh(planeMesh);
 	floor->addTexture(tex1);
 
-	StaticModelRenderer* model = new StaticModelRenderer(simpleColorShader,
+	StaticModelRenderer* model = new StaticModelRenderer(lightShader,
 		"res/nanosuit/nanosuit.obj");
 	Transform3D* trans = model->getTransformation();
 	trans->scale(glm::vec3(0.2f));
 	trans->translate(glm::vec3(2.5, 0.0, -2.0));
 
-	RenderTarget* box = new SimpleObject(simpleColorShader);
+	RenderTarget* box = new SimpleObject(lightShader);
 	box->addMesh(cubeMesh);
 	box->addTexture(cube1);
 	box->getTransformation()->translate(glm::vec3(-3.0f, 0.5f, -2.0f));
@@ -65,6 +67,9 @@ int main()
 	FPSCamera* fpsCamera = reinterpret_cast<FPSCamera*>(camera.get());
 	//fpsCamera->setMoveSpeed(100);
 	
+	renderSys->createSunLightCamera(glm::vec3(0.0f), -25.0f, +25.0f,
+		-25.0f, +25.0f, 1.0f, 300.0f);
+
 	// renderer loop.
 	while (window->run())
 	{

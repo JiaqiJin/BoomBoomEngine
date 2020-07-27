@@ -34,13 +34,7 @@ namespace Kawaii
 		if (sunLight)
 			sunLight->setLightUniform(shader, camera);
 		shader->setInt("image", 0);
-		// depth map.
-		Texture::ptr depthMap = TextureMgr::getSingleton()->getTexture("shadowDepth");
-		if (depthMap != nullptr)
-		{
-			shader->setInt("depthMap", 1);
-			depthMap->bind(1);
-		}
+	
 		if (lightCamera != nullptr)
 			shader->setMat4("lightSpaceMatrix",
 				lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());

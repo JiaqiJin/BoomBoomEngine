@@ -55,16 +55,16 @@ namespace Kawaii
 		void renderImp();
 	};
 
-	class DrawableList : public RenderTarget
+	class RenderTargetList : public RenderTarget
 	{
 	private:
 		std::vector<RenderTarget::ptr> m_list;
 
 	public:
-		typedef std::shared_ptr<DrawableList> ptr;
+		typedef std::shared_ptr<RenderTargetList> ptr;
 
-		DrawableList() = default;
-		virtual ~DrawableList() = default;
+		RenderTargetList() = default;
+		virtual ~RenderTargetList() = default;
 
 		unsigned int addRenderer(RenderTarget* object)
 		{

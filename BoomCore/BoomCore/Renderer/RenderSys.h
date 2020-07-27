@@ -49,7 +49,7 @@ namespace Kawaii
 		Camera3D::ptr m_lightCamera;
 		ShaderMgr::ptr m_shaderMgr;
 		TextureMgr::ptr m_textureMgr;
-		DrawableList::ptr m_renderList;
+		RenderTargetList::ptr m_renderList;
 
 	public:
 		typedef std::shared_ptr<RenderSys> ptr;
