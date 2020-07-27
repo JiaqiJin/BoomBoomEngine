@@ -78,7 +78,27 @@ namespace Kawaii
 		FPSCamera* cam = reinterpret_cast<FPSCamera*>(m_lightCamera.get());
 		cam->lookAt(-m_sunLight->getDirection(), Camera3D::LocalUp);
 	}
-
+	/*
+	void RenderSys::createPointLightCamera(glm::vec3 target, float left, float right,
+		float bottom, float top, float near, float far)
+	{
+		if (m_pointLight == nullptr)
+		{
+			std::cout << "You haven't create a light source.\n";
+			return;
+		}
+		const float length = 200.0f;
+		glm::vec3 pos = length * m_pointLight->getPosition();
+		if (m_lightCamera == nullptr)
+		{
+			FPSCamera* cam = new FPSCamera(pos);
+			m_lightCamera = std::shared_ptr<Camera3D>(cam);
+		}
+		m_lightCamera->setOrthographicProject(left, right, bottom, top, near, far);
+		FPSCamera* cam = reinterpret_cast<FPSCamera*>(m_lightCamera.get());
+		cam->lookAt(-m_pointLight->getPosition(), Camera3D::LocalUp);
+	}
+	*/
 	void RenderSys::setClearMask(GLbitfield mask)
 	{
 		m_renderState.m_clearMask = mask;

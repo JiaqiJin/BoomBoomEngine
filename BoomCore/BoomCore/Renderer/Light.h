@@ -39,4 +39,29 @@ namespace Kawaii
 		glm::vec3 getDirection() const;
 
 	};
+
+	class PointLight : public Light
+	{
+	private:
+		float m_radius;
+		glm::vec3 m_position;
+		float m_atteunationCoff;
+
+		float constant;
+		float linear;
+		float quadratic;
+
+	public:
+		typedef std::shared_ptr<PointLight> ptr;
+
+		PointLight();
+		virtual ~PointLight() = default;
+
+		virtual void setLightUniform(Shader::ptr shader, Camera3D::ptr camera);
+		void setPosition(glm::vec3 pos);
+
+		glm::vec3 getPosition() const;
+
+	};
+
 }

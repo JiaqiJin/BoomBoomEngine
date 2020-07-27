@@ -27,6 +27,7 @@ int main()
 		"Shaders/simple_color.vs", "Shaders/simple_color.fs");
 	unsigned int lightShader = shaderMgr->loadShader("Direclight",
 		"Shaders/reflect.vs", "Shaders/reflect.fs");
+
 	// textures.
 	unsigned int tex1 = textureMgr->loadTexture2D("floor", "res/floor.jpg");
 	unsigned int cube1 = textureMgr->loadTexture2D("cube", "res/cube.jpg");

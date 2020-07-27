@@ -37,6 +37,7 @@ namespace Kawaii
 		// skydome.
 		SkyDome::ptr m_skyDome;
 		DirectionalLight::ptr m_sunLight;
+		PointLight::ptr m_pointLight;
 
 		// render state.
 		RenderState m_renderState;
@@ -61,7 +62,8 @@ namespace Kawaii
 		// Initialization.
 		void resize(int width, int height);
 		void initialize(int width, int height);
-		void createShadowDepthBuffer(int width, int height);
+		//void createPointLightCamera(glm::vec3 target, float left, float right,
+			//float bottom, float top, float near, float far);
 		void createSunLightCamera(glm::vec3 target, float left, float right,
 			float bottom, float top, float near, float far);
 		void setSkyDome(const std::string& path, const std::string& pFix);
