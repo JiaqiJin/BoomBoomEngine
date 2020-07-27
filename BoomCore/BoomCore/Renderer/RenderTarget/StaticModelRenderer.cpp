@@ -1,8 +1,8 @@
 #include "StaticModelRenderer.h"
 
 #include "../Manager/MeshMgr.h"
-#include "../Manager/TextureMgr.h"
 #include "../Manager/ShaderMgr.h"
+#include "../Manager/TextureMgr.h"
 
 #include <iostream>
 #include <assimp/scene.h>
@@ -158,6 +158,5 @@ namespace Kawaii
 			texIndex = textureMgr->loadTexture2D(name, m_directory + "/" + name);
 		}
 	}
-
 
 }

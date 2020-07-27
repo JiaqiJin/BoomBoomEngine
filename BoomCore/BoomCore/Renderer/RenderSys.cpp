@@ -24,7 +24,7 @@ namespace Kawaii
 		m_meshMgr = MeshMgr::getSingleton();
 		m_shaderMgr = ShaderMgr::getSingleton();
 		m_textureMgr = TextureMgr::getSingleton();
-		m_renderList = std::make_shared<RenderTargetList>();
+		m_renderList = std::make_shared<DrawableList>();
 		
 	}
 

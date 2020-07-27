@@ -1,23 +1,25 @@
-#include "InstanceRender.h"
+#include "InstanceRenderer.h"
 
 #include "../Manager/MeshMgr.h"
-#include "../Manager/TextureMgr.h"
 #include "../Manager/ShaderMgr.h"
+#include "../Manager/TextureMgr.h"
+
+#include <iostream>
 
 namespace Kawaii
 {
-	InstanceRender::InstanceRender(unsigned int shaderIndex)
+	InstanceRenderer::InstanceRenderer(unsigned int shaderIndex)
 	{
 		m_shaderIndex = shaderIndex;
 		glGenBuffers(1, &m_instanceVBO);
 	}
 
-	InstanceRender::~InstanceRender()
+	InstanceRenderer::~InstanceRenderer()
 	{
 		glDeleteBuffers(1, &m_instanceVBO);
 	}
 
-	void InstanceRender::setInstanceMatrix(const std::vector<glm::mat4>& instanceMatrice, GLenum drawWay)
+	void InstanceRenderer::setInstanceMatrix(const std::vector<glm::mat4>& instanceMatrice, GLenum drawWay)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_instanceVBO);
 		glBufferData(GL_ARRAY_BUFFER, instanceMatrice.size() * sizeof(glm::mat4),
@@ -49,7 +51,7 @@ namespace Kawaii
 		m_instanceNum = instanceMatrice.size();
 	}
 
-	void InstanceRender::render(Camera3D::ptr camera, Light::ptr sunLight,
+	void InstanceRenderer::render(Camera3D::ptr camera, Light::ptr sunLight,
 		Camera3D::ptr lightCamera, Shader::ptr shader)
 	{
 		if (!m_visiable) return;
@@ -60,13 +62,7 @@ namespace Kawaii
 		if (sunLight)
 			sunLight->setLightUniform(shader, camera);
 		shader->setInt("image", 0);
-		// depth map.
-		Texture::ptr depthMap = TextureMgr::getSingleton()->getTexture("shadowDepth");
-		if (depthMap != nullptr)
-		{
-			shader->setInt("depthMap", 1);
-			depthMap->bind(1);
-		}
+
 		if (lightCamera != nullptr)
 			shader->setMat4("lightSpaceMatrix",
 				lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
@@ -81,5 +77,5 @@ namespace Kawaii
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
 	}
-	
+
 }

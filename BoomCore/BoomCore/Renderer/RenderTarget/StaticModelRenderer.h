@@ -23,7 +23,7 @@ namespace Kawaii
 		virtual void getAABB(glm::vec3& min, glm::vec3& max) { min = m_min; max = m_max; }
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
-
+		
 	private:
 		void loadModel(const std::string& path);
 		void processNode(aiNode* node, const aiScene* scene);

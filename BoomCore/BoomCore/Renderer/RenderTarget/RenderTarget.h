@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../Camera/Camera.h"
+#include <vector>
+#include <memory>
 
 #include "../Manager/Geometry.h"
+#include "../Light.h"
 #include "../Camera/Camera3D.h"
 #include "../Camera/Transform3D.h"
-#include "../Light.h"
 
 namespace Kawaii
 {
@@ -30,6 +31,8 @@ namespace Kawaii
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr) = 0;
 
+		virtual void getAABB(glm::vec3& min, glm::vec3& max) {}
+
 		void setVisiable(bool target) { m_visiable = target; }
 		void setReceiveShadow(bool target) { m_receiveShadow = target; }
 
@@ -52,21 +55,21 @@ namespace Kawaii
 		void renderImp();
 	};
 
-	class RenderTargetList : public RenderTarget
+	class DrawableList : public RenderTarget
 	{
 	private:
 		std::vector<RenderTarget::ptr> m_list;
 
 	public:
-		typedef std::shared_ptr<RenderTargetList> ptr;
+		typedef std::shared_ptr<DrawableList> ptr;
 
-		RenderTargetList() = default;
-		virtual ~RenderTargetList() = default;
+		DrawableList() = default;
+		virtual ~DrawableList() = default;
 
-		unsigned int addRender(RenderTarget* object)
+		unsigned int addRenderer(RenderTarget* object)
 		{
-			RenderTarget::ptr renderer(object);
-			m_list.push_back(renderer);
+			RenderTarget::ptr RenderTarget(object);
+			m_list.push_back(RenderTarget);
 			return m_list.size() - 1;
 		}
 
@@ -91,20 +94,23 @@ namespace Kawaii
 		SkyDome() = default;
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
+	
 	};
 
-	class SimpleRender : public RenderTarget
+	class SimpleObject : public RenderTarget
 	{
 	public:
 
-		SimpleRender(unsigned int shaderIndex)
+		SimpleObject(unsigned int shaderIndex)
 		{
 			m_shaderIndex = shaderIndex;
 		}
 
-		~SimpleRender() = default;
+		~SimpleObject() = default;
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
+	
 	};
-
 }
+
+//

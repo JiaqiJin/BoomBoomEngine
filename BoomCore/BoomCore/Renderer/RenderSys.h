@@ -49,7 +49,7 @@ namespace Kawaii
 		Camera3D::ptr m_lightCamera;
 		ShaderMgr::ptr m_shaderMgr;
 		TextureMgr::ptr m_textureMgr;
-		RenderTargetList::ptr m_renderList;
+		DrawableList::ptr m_renderList;
 
 	public:
 		typedef std::shared_ptr<RenderSys> ptr;
@@ -80,7 +80,7 @@ namespace Kawaii
 		void setClearColor(glm::vec4 clearColor);
 		void setCullFace(bool enable, GLenum face);
 		void setDepthTest(bool enable, GLenum func);
-		void addRenderTarget(RenderTarget* target) { m_renderList->addRender(target); }
+		void addRenderTarget(RenderTarget* target) { m_renderList->addRenderer(target); }
 		void setSunLight(glm::vec3 dir, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec);
 
 		void render();

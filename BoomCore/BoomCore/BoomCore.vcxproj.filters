@@ -66,9 +66,6 @@
     <ClCompile Include="Renderer\Manager\ShaderMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\RenderTarget\RenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\Manager\MeshMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,19 +75,22 @@
     <ClCompile Include="Renderer\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\RenderTarget\StaticModelRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\RenderSys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\RenderWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\RenderTarget\InstanceRender.cpp">
+    <ClCompile Include="TestMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestMain.cpp">
+    <ClCompile Include="Renderer\RenderTarget\RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\RenderTarget\InstanceRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\RenderTarget\StaticModelRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -158,9 +158,6 @@
     <ClInclude Include="Renderer\Manager\ShaderMgr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\RenderTarget\RenderTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\Manager\MeshMgr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -170,16 +167,19 @@
     <ClInclude Include="Renderer\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\RenderTarget\StaticModelRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\RenderSys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RenderWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\RenderTarget\InstanceRender.h">
+    <ClInclude Include="Renderer\RenderTarget\RenderTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RenderTarget\InstanceRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RenderTarget\StaticModelRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
