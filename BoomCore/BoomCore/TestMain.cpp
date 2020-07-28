@@ -48,9 +48,9 @@ int main()
 	floor->addTexture(tex1);
 
 	StaticModelRenderer* model = new StaticModelRenderer(lightShader,
-		"res/nanosuit/nanosuit.obj");
+		"res/sponza_pbr/sponza_pbr.obj");
 	Transform3D* trans = model->getTransformation();
-	trans->scale(glm::vec3(0.2f));
+	trans->scale(glm::vec3(0.01f));
 	trans->translate(glm::vec3(2.5, 0.0, -2.0));
 
 	RenderTarget* box = new SimpleObject(lightShader);
@@ -58,9 +58,9 @@ int main()
 	box->addTexture(cube1);
 	box->getTransformation()->translate(glm::vec3(-3.0f, 0.5f, -2.0f));
 
-	renderSys->addRenderTarget(floor);
+	//renderSys->addRenderTarget(floor);
 	renderSys->addRenderTarget(model);
-	renderSys->addRenderTarget(box);
+	//renderSys->addRenderTarget(box);
 
 
 	Camera3D::ptr camera = renderSys->createFPSCamera(glm::vec3(0, 5, 10), glm::vec3(0, 0, 0));
