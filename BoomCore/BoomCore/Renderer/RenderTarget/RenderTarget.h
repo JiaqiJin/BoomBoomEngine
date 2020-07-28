@@ -10,6 +10,16 @@
 
 namespace Kawaii
 {
+
+	class PBRMaterial
+	{
+	public:
+		unsigned int m_albedoTexIndex = -1;
+		unsigned int m_normalTexIndex = -1;
+		unsigned int m_roughTexIndex = -1;
+		unsigned int m_metallicIndex = -1;
+	};
+
 	class RenderTarget
 	{
 	protected:
@@ -22,6 +32,7 @@ namespace Kawaii
 		unsigned int m_shaderIndex;
 		std::vector<unsigned int> m_texIndex;
 		std::vector<unsigned int> m_meshIndex;
+		std::vector<PBRMaterial> m_PBRtexIndex;
 
 	public:
 		typedef std::shared_ptr<RenderTarget> ptr;
@@ -35,6 +46,8 @@ namespace Kawaii
 
 		void setVisiable(bool target) { m_visiable = target; }
 		void setReceiveShadow(bool target) { m_receiveShadow = target; }
+
+		void addPbrTexture(PBRMaterial matIndex) { m_PBRtexIndex.push_back(matIndex); }
 
 		void addTexture(unsigned int texIndex)
 		{

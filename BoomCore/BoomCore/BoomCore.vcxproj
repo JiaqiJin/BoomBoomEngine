@@ -169,6 +169,7 @@
     <ClCompile Include="Renderer\Manager\ShaderMgr.cpp" />
     <ClCompile Include="Renderer\Manager\Texture.cpp" />
     <ClCompile Include="Renderer\Manager\TextureMgr.cpp" />
+    <ClCompile Include="Renderer\PostProcess\SSAOProcess.cpp" />
     <ClCompile Include="Renderer\RenderTarget\InstanceRenderer.cpp" />
     <ClCompile Include="Renderer\RenderTarget\RenderTarget.cpp" />
     <ClCompile Include="Renderer\RenderTarget\StaticModelRenderer.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="Renderer\Manager\Singleton.h" />
     <ClInclude Include="Renderer\Manager\Texture.h" />
     <ClInclude Include="Renderer\Manager\TextureMgr.h" />
+    <ClInclude Include="Renderer\PostProcess\SSAOProcess.h" />
     <ClInclude Include="Renderer\RenderTarget\InstanceRenderer.h" />
     <ClInclude Include="Renderer\RenderTarget\RenderTarget.h" />
     <ClInclude Include="Renderer\RenderTarget\StaticModelRenderer.h" />

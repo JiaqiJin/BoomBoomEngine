@@ -47,8 +47,10 @@ int main()
 	floor->addMesh(planeMesh);
 	floor->addTexture(tex1);
 
+	//StaticModelRenderer* model = new StaticModelRenderer(lightShader,
+		//"res/sponza_pbr/sponza_pbr.obj");
 	StaticModelRenderer* model = new StaticModelRenderer(lightShader,
-		"res/sponza_pbr/sponza_pbr.obj");
+		"res/nanosuit/nanosuit.obj");
 	Transform3D* trans = model->getTransformation();
 	trans->scale(glm::vec3(0.01f));
 	trans->translate(glm::vec3(2.5, 0.0, -2.0));
@@ -58,8 +60,8 @@ int main()
 	box->addTexture(cube1);
 	box->getTransformation()->translate(glm::vec3(-3.0f, 0.5f, -2.0f));
 
-	//renderSys->addRenderTarget(floor);
-	renderSys->addRenderTarget(model);
+	renderSys->addRenderTarget(floor);
+	//renderSys->addRenderTarget(model);
 	//renderSys->addRenderTarget(box);
 
 

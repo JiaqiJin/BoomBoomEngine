@@ -80,5 +80,22 @@ namespace Kawaii
 		virtual void clearTexture();
 	};
 
+	class TextureColor : public Texture
+	{
+	private:
+		bool m_hdr;
+		int m_width, m_height;
+
+	public:
+		TextureColor(int width, int height, bool hdr = false);
+		~TextureColor();
+
+		virtual void bind(unsigned int unit);
+		virtual void unBind();
+
+	private:
+		virtual void setupTexture(const std::string& path, const std::string& pFix);
+		virtual void clearTexture();
+	};
 
 }

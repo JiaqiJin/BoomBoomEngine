@@ -185,4 +185,52 @@ namespace Kawaii
 	{
 		glDeleteTextures(1, &m_id);
 	}
+
+
+	TextureColor::TextureColor(int width, int height, bool hdr)
+		:m_width(width), m_height(height), m_hdr(hdr)
+	{
+		setupTexture("", "");
+	}
+
+	TextureColor::~TextureColor()
+	{
+		clearTexture();
+	}
+
+	void TextureColor::bind(unsigned int unit)
+	{
+		glActiveTexture(GL_TEXTURE0 + unit);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+	}
+
+	void TextureColor::unBind()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void TextureColor::setupTexture(const std::string& path, const std::string& pFix)
+	{
+		// generate depth buffer.
+		glGenTextures(1, &m_id);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+		if (!m_hdr)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height,
+				0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_width, m_height,
+				0, GL_RGB, GL_FLOAT, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// here must be GL_NEAREST, otherwise there is a bug.
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void TextureColor::clearTexture()
+	{
+		glDeleteTextures(1, &m_id);
+	}
+
 }

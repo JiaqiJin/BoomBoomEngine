@@ -44,6 +44,17 @@ namespace Kawaii
 			return m_units.size() - 1;
 		}
 
+		unsigned int loadTextureColor(const std::string& name, int width, int height, bool hdr = false)
+		{
+			if (m_unitMap.find(name) != m_unitMap.end())
+				return m_unitMap[name];
+			Texture::ptr tex(new TextureColor(width, height, hdr));
+			m_units.push_back(tex);
+			m_unitMap[name] = m_units.size() - 1;
+			return m_units.size() - 1;
+		}
+
+
 		unsigned int loadTextureDepth(const std::string& name, int width, int height)
 		{
 			if (m_unitMap.find(name) != m_unitMap.end())
