@@ -72,6 +72,9 @@ namespace Kawaii
 		m_renderSys = std::make_shared<RenderSys>();
 		m_renderSys->initialize(m_width, m_height);
 
+		// msaa
+		glEnable(GL_MULTISAMPLE);
+
 		return true;
 	}
 

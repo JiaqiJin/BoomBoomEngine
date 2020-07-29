@@ -18,7 +18,7 @@ namespace Kawaii
 		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
 		//load shader
 		unsigned int shaderIndex = shaderMgr->loadShader("convertToCubemap",
-			"Shaders/convertToCubemap.vs", "Shaders/convertToCubemap.fs");
+			"Shaders/PBR/convertToCubemap.vs", "Shaders/PBR/convertToCubemap.fs");
 		// load cube mesh.
 		Mesh::ptr cubeMesh = std::shared_ptr<Mesh>(new Cube(1.0f, 1.0f, 1.0f));
 		//load frane buffer
@@ -70,7 +70,7 @@ namespace Kawaii
 		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
 		// load shader.
 		unsigned int shaderIndex = shaderMgr->loadShader("diffuseIntegral",
-			"Shaders/diffuseIntegral.vs", "Shaders/diffuseIntegral.fs");
+			"Shaders/PBR/diffuseIntegral.vs", "Shaders/PBR/diffuseIntegral.fs");
 		// load cube mesh.
 		Mesh::ptr cubeMesh = std::shared_ptr<Mesh>(new Cube(1.0f, 1.0f, 1.0f));
 		// load framebuffer.
@@ -122,7 +122,7 @@ namespace Kawaii
 		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
 		// load shader.
 		unsigned int shaderIndex = shaderMgr->loadShader("prefilterEnvMap",
-			"Shaders/prefilterEnvMap.vert", "Shaders/prefilterEnvMap.frag");
+			"Shaders/PBR/prefilterEnvMap.vs", "Shaders/PBR/prefilterEnvMap.fs");
 		// load cube mesh.
 		Mesh::ptr cubeMesh = std::shared_ptr<Mesh>(new Cube(1.0f, 1.0f, 1.0f));
 		// projection matrix and view matrix.
@@ -183,7 +183,7 @@ namespace Kawaii
 		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
 		// load shader.
 		unsigned int shaderIndex = shaderMgr->loadShader("genBrdfLUT",
-			"Shaders/genBrdfLUT.vert", "Shaders/genBrdfLUT.frag");
+			"Shaders/PBR/genBrdfLUT.vs", "Shaders/PBR/genBrdfLUT.fs");
 		// load quad mesh.
 		Mesh::ptr quadMesh = std::shared_ptr<Mesh>(new ScreenQuad());
 		FrameBuffer::ptr framebuffer = std::shared_ptr<FrameBuffer>(

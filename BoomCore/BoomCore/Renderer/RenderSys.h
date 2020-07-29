@@ -7,6 +7,8 @@
 #include "Manager/TextureMgr.h"
 #include "RenderTarget/RenderTarget.h"
 #include "Manager/FrameBuffer.h"
+#include "RenderTarget/PointLightRenderer.h"
+#include "PostProcess/DeferedRender.h"
 
 namespace Kawaii
 {
@@ -38,12 +40,15 @@ namespace Kawaii
 		SkyDome::ptr m_skyDome;
 		DirectionalLight::ptr m_sunLight;
 		PointLight::ptr m_pointLight;
+		std::vector<PointLight::ptr> m_pointLights;
 
 		// render state.
 		RenderState m_renderState;
 		int m_width, m_height;
-		FrameBuffer::ptr m_shadowDepthBuffer;
 
+		FrameBuffer::ptr m_shadowDepthBuffer;
+		PointLightRenderer::ptr m_pointLightRenderer;
+		DeferedRender::ptr m_deferedRender;
 		// manager.
 		MeshMgr::ptr m_meshMgr;
 		Camera3D::ptr m_camera;
@@ -83,12 +88,14 @@ namespace Kawaii
 		void setClearColor(glm::vec4 clearColor);
 		void setCullFace(bool enable, GLenum face);
 		void setDepthTest(bool enable, GLenum func);
+		void addPointLight(glm::vec3 pos, glm::vec3 radiance);
 		void addRenderTarget(RenderTarget* target) { m_renderList->addRenderer(target); }
 		void setSunLight(glm::vec3 dir, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec);
-
+		void setSunLight(glm::vec3 dir, glm::vec3 radiance);
 		void render();
 
 	private:
-		
+		std::vector<glm::vec3> m_rndVelForPointLights;
+		void updatePointLightPosition();
 	};
 }

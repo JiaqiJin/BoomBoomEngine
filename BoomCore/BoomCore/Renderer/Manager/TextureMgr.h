@@ -118,6 +118,16 @@ namespace Kawaii
 			return true;
 		}
 
+		bool bindTexture(const std::string& name, unsigned int unit)
+		{
+			if (m_unitMap.find(name) == m_unitMap.end())
+			{
+				return false;
+			}
+			m_units[m_unitMap[name]]->bind(unit);
+			return true;
+		}
+
 		bool unBindTexture(unsigned int index)
 		{
 			if (index >= m_units.size())
@@ -125,6 +135,14 @@ namespace Kawaii
 			m_units[index]->unBind();
 			return true;
 		}
+		bool unBindTexture(const std::string& name)
+		{
+			if (m_unitMap.find(name) == m_unitMap.end())
+				return false;
+			m_units[m_unitMap[name]]->unBind();
+			return true;
+		}
+
 	};
 
 

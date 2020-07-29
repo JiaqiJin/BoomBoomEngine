@@ -24,7 +24,7 @@ namespace Kawaii
 	{
 	protected:
 		bool m_instance = false;
-		bool m_receiveShadow = true;
+		bool m_receiveShadow = false;
 		bool m_visiable = true;
 		int m_instanceNum = 0;
 		Transform3D m_transformation;

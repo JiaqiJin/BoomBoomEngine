@@ -15,6 +15,6 @@ void main(){
 	Texcoord = normalize(position);
 	Normal = normal;
 	Color = color;
-	vec4 pos = projectMatrix * viewMatrix * vec4(position,1.0f);
+	vec4 pos = projectMatrix * viewMatrix * vec4(position, 1.0f);
 	gl_Position = pos.xyww;
 }

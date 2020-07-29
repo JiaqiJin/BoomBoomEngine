@@ -5,6 +5,9 @@
 
 #include "PostProcess/IBL.h"
 
+#include <iostream>
+#include <time.h>
+
 namespace Kawaii
 {
 	void RenderSys::resize(int width, int height)
@@ -21,6 +24,9 @@ namespace Kawaii
 	{
 		m_width = width;
 		m_height = height;
+		m_pointLightRenderer = nullptr;
+		setSunLight(glm::vec3(0.1f, 1.0f, 0.3f), glm::vec3(0.6f));
+
 		// initialization.
 		resize(width, height);
 		m_meshMgr = MeshMgr::getSingleton();
@@ -28,7 +34,20 @@ namespace Kawaii
 		m_textureMgr = TextureMgr::getSingleton();
 		m_renderList = std::make_shared<RenderTargetList>();
 		
+		// load built-in shaders.
+		m_shaderMgr->loadShader("shadow", "Shaders/depth.vs", "Shaders/depth.fs");
+		// defered shading.
+		m_deferedRender = std::shared_ptr<DeferedRender>(new DeferedRender(m_width, m_height));
 	}
+
+	void RenderSys::setSunLight(glm::vec3 dir, glm::vec3 radiance)
+	{
+		DirectionalLight* light = new DirectionalLight();
+		light->setDirection(dir);
+		light->setLightColor(radiance);
+		m_sunLight = std::shared_ptr<DirectionalLight>(light);
+	}
+
 
 	void RenderSys::setSkyDomeHdr(const std::string& path)
 	{
@@ -74,6 +93,9 @@ namespace Kawaii
 		m_skyDome = std::make_shared<SkyDome>(skyboxShader);
 		m_skyDome->addMesh(mesh);
 		m_skyDome->addTexture(cubeTex);
+		PBRMaterial mat;
+		mat.m_albedoTexIndex = cubeTex;
+		m_skyDome->addPbrTexture(mat);
 	}
 
 	Camera3D::ptr RenderSys::createFPSCamera(glm::vec3 pos, glm::vec3 target)
@@ -91,6 +113,16 @@ namespace Kawaii
 		TPSCamera* _cam = new TPSCamera(target, 0.0f, 30.0f, 3.0f);
 		m_camera = std::shared_ptr<Camera3D>(_cam);
 		return m_camera;
+	}
+
+	void RenderSys::addPointLight(glm::vec3 pos, glm::vec3 radiance)
+	{
+		if (m_pointLights.size() >= 128)
+			return;
+		PointLight::ptr pointLight = std::shared_ptr<PointLight>(new PointLight());
+		pointLight->setPosition(pos, m_pointLights.size());
+		pointLight->setLightColor(radiance);
+		m_pointLights.push_back(pointLight);
 	}
 
 	void RenderSys::createSunLightCamera(glm::vec3 target, float left, float right,
@@ -174,40 +206,118 @@ namespace Kawaii
 		if (m_renderList == nullptr)
 			return;
 
-	
-		// polygon mode.
-		glPolygonMode(GL_FRONT_AND_BACK, m_renderState.m_polygonMode);
-
-		// cullface setting.
-		if (m_renderState.m_cullFace)
-			glEnable(GL_CULL_FACE);
-		else
-			glDisable(GL_CULL_FACE);
-		glCullFace(m_renderState.m_cullFaceMode);
-
-		// depth testing setting.
-		if (m_renderState.m_depthTest)
-			glEnable(GL_DEPTH_TEST);
-		else
-			glDisable(GL_DEPTH_TEST);
-		glDepthFunc(m_renderState.m_depthFunc);
-
-		// clearing color.
-		glClearColor(m_renderState.m_clearColor.x, m_renderState.m_clearColor.y,
-			m_renderState.m_clearColor.z, m_renderState.m_clearColor.w);
-		glClear(m_renderState.m_clearMask);
-
-		// render the drawable list.
-		m_renderList->render(m_camera, m_sunLight, m_lightCamera);
-
-		// render the skydome.
-		if (m_skyDome != nullptr)
+		// render the shadow.
+		
+		// point light objects genration.
+		if (m_pointLightRenderer == nullptr && m_pointLights.size() > 0)
 		{
-			glDepthFunc(GL_LEQUAL);
-			glCullFace(GL_FRONT);
-			m_skyDome->render(m_camera, m_sunLight, m_lightCamera);
+			m_pointLightRenderer = std::shared_ptr<PointLightRenderer>
+				(new PointLightRenderer());
+			m_pointLightRenderer->setPointLightRadius(0.7f);
+			m_pointLightRenderer->setPointLightPositions(m_pointLights);
 		}
+		updatePointLightPosition();
+
+		{
+			m_deferedRender->bindDeferedFramebuffer();
+			glClearColor(0.0, 0.0, 1.0, 1.0f);
+			glClear(m_renderState.m_clearMask);
+
+			// polygon mode.
+			glPolygonMode(GL_FRONT_AND_BACK, m_renderState.m_polygonMode);
+
+			// cullface setting.
+			if (m_renderState.m_cullFace)
+				glEnable(GL_CULL_FACE);
+			else
+				glDisable(GL_CULL_FACE);
+			glCullFace(m_renderState.m_cullFaceMode);
+
+			// depth testing setting.
+			if (m_renderState.m_depthTest)
+				glEnable(GL_DEPTH_TEST);
+			else
+				glDisable(GL_DEPTH_TEST);
+			glDepthFunc(m_renderState.m_depthFunc);
+
+			// render the drawable list.
+			m_renderList->render(m_camera, m_sunLight, m_lightCamera);
+
+			// render the light source.
+			if (m_pointLightRenderer != nullptr)
+				m_pointLightRenderer->render(m_camera, m_sunLight, nullptr, nullptr);
+		}
+
+		
+			glDisable(GL_BLEND);
+			glDisable(GL_CULL_FACE);
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
+			glDepthMask(GL_TRUE);
+			glClearColor(1.0, 1.0, 1.0, 1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			m_deferedRender->renderDeferedShading(m_camera, m_sunLight,
+				m_lightCamera, m_pointLights);
+
+			// render the skydome.
+			if (m_skyDome != nullptr)
+			{
+				glEnable(GL_DEPTH_TEST);
+				glCullFace(GL_FRONT);
+				m_skyDome->render(m_camera, m_sunLight, nullptr);
+			}
 	}
 
+	// just move light source for demo.
+	void RenderSys::updatePointLightPosition()
+	{
+		// generate random velocity.
+		if (m_rndVelForPointLights.empty())
+		{
+			m_rndVelForPointLights.resize(m_pointLights.size());
+			srand(time(nullptr));
+			for (unsigned int x = 0; x < m_pointLights.size(); ++x)
+			{
+				glm::vec3 vel;
+				vel.x = (((double)rand()) / RAND_MAX) * 2.0f - 1.0f;
+				//vel.y = (((double)rand()) / RAND_MAX) * 2.0f - 1.0f;
+				vel.y = 0.0f;
+				vel.z = (((double)rand()) / RAND_MAX) * 2.0f - 1.0f;
+				m_rndVelForPointLights[x] = vel;
+			}
+		}
+
+		const float speed = 0.2f;
+		for (unsigned int x = 0; x < m_pointLights.size(); ++x)
+		{
+			glm::vec3 pos = m_pointLights[x]->getPosition();
+			pos += m_rndVelForPointLights[x] * speed;
+			bool update = false;
+			if (pos.x > 200.0f)
+			{
+				pos.x = 200.0f;
+				update = true;
+			}
+			if (pos.x < -200.0f)
+			{
+				pos.x = -200.0f;
+				update = true;
+			}
+			if (pos.z > 200.0f)
+			{
+				pos.z = 200.0f;
+				update = true;
+			}
+			if (pos.z < -200.0f)
+			{
+				pos.z = -200.0f;
+				update = true;
+			}
+			if (update)
+				m_rndVelForPointLights[x] *= (-1);
+			m_pointLights[x]->setPosition(pos, x);
+		}
+		m_pointLightRenderer->setPointLightPositions(m_pointLights);
+	}
 
 }

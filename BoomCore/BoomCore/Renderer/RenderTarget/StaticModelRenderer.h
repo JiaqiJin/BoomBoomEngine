@@ -25,8 +25,10 @@ namespace Kawaii
 	private:
 		void loadModel(const std::string& path);
 		void processNode(aiNode* node, const aiScene* scene);
+		//void processMesh(aiMesh* mesh, const aiScene* scene,
+			//unsigned int& meshIndex, unsigned int& texIndex);
 		void processMesh(aiMesh* mesh, const aiScene* scene,
-			unsigned int& meshIndex, unsigned int& texIndex);
+			unsigned int& meshIndex, PBRMaterial& pbrMat);
 	};
 
 }
