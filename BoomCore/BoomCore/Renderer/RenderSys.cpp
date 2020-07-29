@@ -3,10 +3,12 @@
 #include "Camera/FPSCamera.h"
 #include "Camera/TPSCamera.h"
 
-#include "PostProcess/IBL.h"
+#include "Postprocess/IBL.h"
 
 #include <iostream>
 #include <time.h>
+
+using namespace std;
 
 namespace Kawaii
 {
@@ -25,40 +27,34 @@ namespace Kawaii
 		m_width = width;
 		m_height = height;
 		m_pointLightRenderer = nullptr;
+		// shadow system.
 		setSunLight(glm::vec3(0.1f, 1.0f, 0.3f), glm::vec3(0.6f));
+		
 
 		// initialization.
 		resize(width, height);
 		m_meshMgr = MeshMgr::getSingleton();
 		m_shaderMgr = ShaderMgr::getSingleton();
 		m_textureMgr = TextureMgr::getSingleton();
-		m_renderList = std::make_shared<RenderTargetList>();
-		
+		m_renderList = make_shared<RenderTargetList>();
+
 		// load built-in shaders.
 		m_shaderMgr->loadShader("shadow", "Shaders/depth.vs", "Shaders/depth.fs");
+
 		// defered shading.
 		m_deferedRender = std::shared_ptr<DeferedRender>(new DeferedRender(m_width, m_height));
 	}
-
-	void RenderSys::setSunLight(glm::vec3 dir, glm::vec3 radiance)
-	{
-		DirectionalLight* light = new DirectionalLight();
-		light->setDirection(dir);
-		light->setLightColor(radiance);
-		m_sunLight = std::shared_ptr<DirectionalLight>(light);
-	}
-
 
 	void RenderSys::setSkyDomeHdr(const std::string& path)
 	{
 		if (m_skyDome != nullptr)
 			return;
 		unsigned int skyboxShader = m_shaderMgr->loadShader("skybox",
-			"Shaders/skybox.vs", "Shaders/skybox.fs");
+			"./glsl/skybox.vert", "./glsl/skybox.frag");
 		unsigned int hdrTexIndex = m_textureMgr->loadTexture2DHdr("hdrTex", path);
 		unsigned int cubeTexIndex = m_textureMgr->loadTextureCubeHdrRaw("skyboxCubemap", nullptr, 1024, 1024);
 
-		//convert hdrmap to cubemap
+		// convert hdrmap to cubemap.
 		IBLAux::convertToCubemap(1024, 1024, hdrTexIndex, cubeTexIndex);
 
 		// precompute the irradiance map.
@@ -74,7 +70,7 @@ namespace Kawaii
 		IBLAux::convoluteSpecularBRDFIntegral(512, 512, brdfLutTexIndex);
 
 		unsigned int mesh = m_meshMgr->loadMesh(new Sphere(1.0f, 10, 10));
-		m_skyDome = std::make_shared<SkyDome>(skyboxShader);
+		m_skyDome = make_shared<SkyDome>(skyboxShader);
 		PBRMaterial mat;
 		mat.m_albedoTexIndex = cubeTexIndex;
 		m_skyDome->addMesh(mesh);
@@ -87,12 +83,11 @@ namespace Kawaii
 		if (m_skyDome != nullptr)
 			return;
 		unsigned int skyboxShader = m_shaderMgr->loadShader("skybox",
-			"Shaders/skybox.vs", "Shaders/skybox.fs");
+			"Shaders/skybox.vert", "Shaders/skybox.frag");
 		unsigned int cubeTex = m_textureMgr->loadTextureCube("skybox", path, pFix);
 		unsigned int mesh = m_meshMgr->loadMesh(new Sphere(1.0f, 10, 10));
-		m_skyDome = std::make_shared<SkyDome>(skyboxShader);
+		m_skyDome = make_shared<SkyDome>(skyboxShader);
 		m_skyDome->addMesh(mesh);
-		m_skyDome->addTexture(cubeTex);
 		PBRMaterial mat;
 		mat.m_albedoTexIndex = cubeTex;
 		m_skyDome->addPbrTexture(mat);
@@ -103,7 +98,7 @@ namespace Kawaii
 		// create a first person camera.
 		FPSCamera* _cam = new FPSCamera(pos);
 		_cam->lookAt(glm::normalize(target - pos), Camera3D::LocalUp);
-		m_camera = std::shared_ptr<Camera3D>(_cam);
+		m_camera = shared_ptr<Camera3D>(_cam);
 		return m_camera;
 	}
 
@@ -111,60 +106,10 @@ namespace Kawaii
 	{
 		// create a third person camera.
 		TPSCamera* _cam = new TPSCamera(target, 0.0f, 30.0f, 3.0f);
-		m_camera = std::shared_ptr<Camera3D>(_cam);
+		m_camera = shared_ptr<Camera3D>(_cam);
 		return m_camera;
 	}
 
-	void RenderSys::addPointLight(glm::vec3 pos, glm::vec3 radiance)
-	{
-		if (m_pointLights.size() >= 128)
-			return;
-		PointLight::ptr pointLight = std::shared_ptr<PointLight>(new PointLight());
-		pointLight->setPosition(pos, m_pointLights.size());
-		pointLight->setLightColor(radiance);
-		m_pointLights.push_back(pointLight);
-	}
-
-	void RenderSys::createSunLightCamera(glm::vec3 target, float left, float right,
-		float bottom, float top, float near, float far)
-	{
-		if (m_sunLight == nullptr)
-		{
-			std::cout << "You haven't create a light source.\n";
-			return;
-		}
-		const float length = 200.0f;
-		glm::vec3 pos = length * m_sunLight->getDirection();
-		if (m_lightCamera == nullptr)
-		{
-			FPSCamera* cam = new FPSCamera(pos);
-			m_lightCamera = std::shared_ptr<Camera3D>(cam);
-		}
-		m_lightCamera->setOrthographicProject(left, right, bottom, top, near, far);
-		FPSCamera* cam = reinterpret_cast<FPSCamera*>(m_lightCamera.get());
-		cam->lookAt(-m_sunLight->getDirection(), Camera3D::LocalUp);
-	}
-	/*
-	void RenderSys::createPointLightCamera(glm::vec3 target, float left, float right,
-		float bottom, float top, float near, float far)
-	{
-		if (m_pointLight == nullptr)
-		{
-			std::cout << "You haven't create a light source.\n";
-			return;
-		}
-		const float length = 200.0f;
-		glm::vec3 pos = length * m_pointLight->getPosition();
-		if (m_lightCamera == nullptr)
-		{
-			FPSCamera* cam = new FPSCamera(pos);
-			m_lightCamera = std::shared_ptr<Camera3D>(cam);
-		}
-		m_lightCamera->setOrthographicProject(left, right, bottom, top, near, far);
-		FPSCamera* cam = reinterpret_cast<FPSCamera*>(m_lightCamera.get());
-		cam->lookAt(-m_pointLight->getPosition(), Camera3D::LocalUp);
-	}
-	*/
 	void RenderSys::setClearMask(GLbitfield mask)
 	{
 		m_renderState.m_clearMask = mask;
@@ -187,13 +132,42 @@ namespace Kawaii
 		m_renderState.m_depthFunc = func;
 	}
 
-	void RenderSys::setSunLight(glm::vec3 dir, glm::vec3 amb,
-		glm::vec3 diff, glm::vec3 spec)
+	void RenderSys::addPointLight(glm::vec3 pos, glm::vec3 radiance)
+	{
+		if (m_pointLights.size() >= 128)
+			return;
+		PointLight::ptr pointLight = std::shared_ptr<PointLight>(new PointLight());
+		pointLight->setPosition(pos, m_pointLights.size());
+		pointLight->setLightColor(radiance);
+		m_pointLights.push_back(pointLight);
+	}
+
+	void RenderSys::setSunLight(glm::vec3 dir, glm::vec3 radiance)
 	{
 		DirectionalLight* light = new DirectionalLight();
 		light->setDirection(dir);
-		light->setLightColor(amb, diff, spec);
-		m_sunLight = std::shared_ptr<DirectionalLight>(light);
+		light->setLightColor(radiance);
+		m_sunLight = shared_ptr<DirectionalLight>(light);
+	}
+
+	void RenderSys::createSunLightCamera(glm::vec3 target, float left, float right,
+		float bottom, float top, float near, float far)
+	{
+		if (m_sunLight == nullptr)
+		{
+			std::cout << "You haven't create a light source.\n";
+			return;
+		}
+		const float length = 200.0f;
+		glm::vec3 pos = length * m_sunLight->getDirection();
+		if (m_lightCamera == nullptr)
+		{
+			FPSCamera* cam = new FPSCamera(pos);
+			m_lightCamera = std::shared_ptr<Camera3D>(cam);
+		}
+		m_lightCamera->setOrthographicProject(left, right, bottom, top, near, far);
+		FPSCamera* cam = reinterpret_cast<FPSCamera*>(m_lightCamera.get());
+		cam->lookAt(-m_sunLight->getDirection(), Camera3D::LocalUp);
 	}
 
 	void RenderSys::setPolygonMode(GLenum mode)
@@ -206,8 +180,6 @@ namespace Kawaii
 		if (m_renderList == nullptr)
 			return;
 
-		// render the shadow.
-		
 		// point light objects genration.
 		if (m_pointLightRenderer == nullptr && m_pointLights.size() > 0)
 		{
@@ -218,8 +190,10 @@ namespace Kawaii
 		}
 		updatePointLightPosition();
 
+		// render to g-buffers.
 		{
 			m_deferedRender->bindDeferedFramebuffer();
+
 			glClearColor(0.0, 0.0, 1.0, 1.0f);
 			glClear(m_renderState.m_clearMask);
 
@@ -241,14 +215,14 @@ namespace Kawaii
 			glDepthFunc(m_renderState.m_depthFunc);
 
 			// render the drawable list.
-			m_renderList->render(m_camera, m_sunLight, m_lightCamera);
+			m_renderList->render(m_camera, m_sunLight,m_lightCamera);
 
 			// render the light source.
 			if (m_pointLightRenderer != nullptr)
 				m_pointLightRenderer->render(m_camera, m_sunLight, nullptr, nullptr);
 		}
 
-		
+		{
 			glDisable(GL_BLEND);
 			glDisable(GL_CULL_FACE);
 			glEnable(GL_DEPTH_TEST);
@@ -266,6 +240,7 @@ namespace Kawaii
 				glCullFace(GL_FRONT);
 				m_skyDome->render(m_camera, m_sunLight, nullptr);
 			}
+		}
 	}
 
 	// just move light source for demo.
