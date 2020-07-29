@@ -210,5 +210,9 @@
     <None Include="Shaders\PBR\pbrDeferedShading.vs" />
     <None Include="Shaders\PBR\convertToCubemap.vs" />
     <None Include="Shaders\PBR\convertToCubemap.fs" />
+    <None Include="Shaders\PBR\diffuseIntegral.vs" />
+    <None Include="Shaders\PBR\diffuseIntegral.fs" />
+    <None Include="Shaders\PBR\prefilterEnvMap.vs" />
+    <None Include="Shaders\PBR\prefilterEnvMap.fs" />
   </ItemGroup>
 </Project>

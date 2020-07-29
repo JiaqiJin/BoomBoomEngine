@@ -215,10 +215,14 @@
   <ItemGroup>
     <None Include="Shaders\PBR\convertToCubemap.fs" />
     <None Include="Shaders\PBR\convertToCubemap.vs" />
+    <None Include="Shaders\PBR\diffuseIntegral.fs" />
+    <None Include="Shaders\PBR\diffuseIntegral.vs" />
     <None Include="Shaders\PBR\pbrDeferedShading.fs" />
     <None Include="Shaders\PBR\pbrDeferedShading.vs" />
     <None Include="Shaders\PBR\pbrShader.fs" />
     <None Include="Shaders\PBR\pbrShader.vs" />
+    <None Include="Shaders\PBR\prefilterEnvMap.fs" />
+    <None Include="Shaders\PBR\prefilterEnvMap.vs" />
     <None Include="Shaders\reflect.fs" />
     <None Include="Shaders\reflect.vs" />
     <None Include="Shaders\shader.fs" />

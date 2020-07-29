@@ -46,7 +46,9 @@ namespace Kawaii
 		unsigned int irradianceTexIndex = m_textureMgr->loadTextureCubeHdrRaw("irradianceMap", nullptr, 64, 64);
 		IBLAux::convoluteDiffuseIntegral(64, 64, cubeTexIndex, irradianceTexIndex);
 
-
+		// prefilter the environment map for specular lighting.
+		unsigned int prefilteredTexIndex = m_textureMgr->loadTextureCubeHdrRaw("prefilteredMap", nullptr, 256, 256, true);
+		IBLAux::convoluteSpecularIntegral(256, 256, cubeTexIndex, prefilteredTexIndex);
 
 		unsigned int mesh = m_meshMgr->loadMesh(new Sphere(1.0f, 10, 10));
 		m_skyDome = std::make_shared<SkyDome>(skyboxShader);

@@ -18,7 +18,7 @@ namespace Kawaii
 		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
 		//load shader
 		unsigned int shaderIndex = shaderMgr->loadShader("convertToCubemap",
-			"Shader/convertToCubemap.vs", "Shader/convertToCubemap.fs");
+			"Shaders/convertToCubemap.vs", "Shaders/convertToCubemap.fs");
 		// load cube mesh.
 		Mesh::ptr cubeMesh = std::shared_ptr<Mesh>(new Cube(1.0f, 1.0f, 1.0f));
 		//load frane buffer
@@ -70,7 +70,7 @@ namespace Kawaii
 		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
 		// load shader.
 		unsigned int shaderIndex = shaderMgr->loadShader("diffuseIntegral",
-			"Shader/diffuseIntegral.vs", "Shader/diffuseIntegral.fs");
+			"Shaders/diffuseIntegral.vs", "Shaders/diffuseIntegral.fs");
 		// load cube mesh.
 		Mesh::ptr cubeMesh = std::shared_ptr<Mesh>(new Cube(1.0f, 1.0f, 1.0f));
 		// load framebuffer.
@@ -113,4 +113,67 @@ namespace Kawaii
 		texMgr->unBindTexture(cubemapTexIndex);
 		framebuffer->unBind();
 	}
+
+	void IBLAux::convoluteSpecularIntegral(int width, int height, unsigned int cubemapTexIndex,
+		unsigned int prefilteredTexIndex)
+	{
+		// manager.
+		TextureMgr::ptr texMgr = TextureMgr::getSingleton();
+		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
+		// load shader.
+		unsigned int shaderIndex = shaderMgr->loadShader("prefilterEnvMap",
+			"Shaders/prefilterEnvMap.vert", "Shaders/prefilterEnvMap.frag");
+		// load cube mesh.
+		Mesh::ptr cubeMesh = std::shared_ptr<Mesh>(new Cube(1.0f, 1.0f, 1.0f));
+		// projection matrix and view matrix.
+		glm::mat4 captureProjectMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+		glm::mat4 captureViewMatrix[] =
+		{
+			glm::lookAt(glm::vec3(0.0f), glm::vec3(+1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+			glm::lookAt(glm::vec3(0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+			glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f,+1.0f, 0.0f), glm::vec3(0.0f,  0.0f,+1.0f)),
+			glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f,-1.0f, 0.0f), glm::vec3(0.0f,  0.0f,-1.0f)),
+			glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f,+1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+			glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+		};
+		// begin to filter.
+		GLuint prefilteredTexId = texMgr->getTexture(prefilteredTexIndex)->getTextureId();
+		Shader::ptr shader = shaderMgr->getShader(shaderIndex);
+		shader->bind();
+		shader->setInt("environmentMap", 0);
+		shader->setMat4("projectMatrix", captureProjectMatrix);
+		texMgr->bindTexture(cubemapTexIndex, 0);
+		unsigned int maxMipLevels = 5;
+		for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+		{
+			unsigned int mipWidth = width * std::pow(0.5, mip);
+			unsigned int mipHeight = height * std::pow(0.5, mip);
+			std::stringstream ss;
+			ss << mip;
+			FrameBuffer::ptr framebuffer = std::shared_ptr<FrameBuffer>(
+				new FrameBuffer(mipWidth, mipHeight, "prefilteredDepth" + ss.str(), {}, true));
+			framebuffer->bind();
+			glDisable(GL_BLEND);
+			glDisable(GL_CULL_FACE);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+			glDepthFunc(GL_LEQUAL);
+			glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+			float roughness = (float)mip / (float)(maxMipLevels - 1);
+			shader->setFloat("roughness", roughness);
+			for (unsigned int i = 0; i < 6; ++i)
+			{
+				shader->setMat4("viewMatrix", captureViewMatrix[i]);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilteredTexId, mip);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				cubeMesh->draw(false, 0);
+			}
+			framebuffer->unBind();
+		}
+		shader->unBind();
+		texMgr->unBindTexture(cubemapTexIndex);
+	}
+
 }

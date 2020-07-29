@@ -13,5 +13,9 @@ namespace Kawaii
 	
 		static void convoluteDiffuseIntegral(int width, int height, unsigned int cubemapTexIndex,
 			unsigned int irradianceTexIndex);
+
+		static void convoluteSpecularIntegral(int width, int height, unsigned int cubemapTexIndex,
+			unsigned int prefilteredTexIndex);
+
 	};
 }
