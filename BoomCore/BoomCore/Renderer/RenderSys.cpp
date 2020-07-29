@@ -3,6 +3,8 @@
 #include "Camera/FPSCamera.h"
 #include "Camera/TPSCamera.h"
 
+#include "PostProcess/IBL.h"
+
 namespace Kawaii
 {
 	void RenderSys::resize(int width, int height)
@@ -33,10 +35,19 @@ namespace Kawaii
 		if (m_skyDome != nullptr)
 			return;
 		unsigned int skyboxShader = m_shaderMgr->loadShader("skybox",
-			"./glsl/skybox.vert", "./glsl/skybox.frag");
+			"Shaders/skybox.vs", "Shaders/skybox.fs");
 		unsigned int hdrTexIndex = m_textureMgr->loadTexture2DHdr("hdrTex", path);
 		unsigned int cubeTexIndex = m_textureMgr->loadTextureCubeHdrRaw("skyboxCubemap", nullptr, 1024, 1024);
 
+		//convert hdrmap to cubemap
+		IBLAux::convertToCubemap(1024, 1024, hdrTexIndex, cubeTexIndex);
+
+		unsigned int mesh = m_meshMgr->loadMesh(new Sphere(1.0f, 10, 10));
+		m_skyDome = std::make_shared<SkyDome>(skyboxShader);
+		PBRMaterial mat;
+		mat.m_albedoTexIndex = cubeTexIndex;
+		m_skyDome->addMesh(mesh);
+		m_skyDome->addPbrTexture(mat);
 	}
 
 	void RenderSys::setSkyDome(const std::string& path, const std::string& pFix)

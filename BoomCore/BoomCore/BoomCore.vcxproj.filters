@@ -208,5 +208,7 @@
     <None Include="Shaders\PBR\pbrShader.fs" />
     <None Include="Shaders\PBR\pbrDeferedShading.fs" />
     <None Include="Shaders\PBR\pbrDeferedShading.vs" />
+    <None Include="Shaders\PBR\convertToCubemap.vs" />
+    <None Include="Shaders\PBR\convertToCubemap.fs" />
   </ItemGroup>
 </Project>
