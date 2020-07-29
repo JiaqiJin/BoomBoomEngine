@@ -96,6 +96,9 @@
     <ClCompile Include="Renderer\PostProcess\SSAOProcess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\PostProcess\IBL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\Dialog.h">
@@ -188,6 +191,9 @@
     <ClInclude Include="Renderer\PostProcess\SSAOProcess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\PostProcess\IBL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\shader.vs" />
@@ -198,5 +204,9 @@
     <None Include="Shaders\simple_color.vs" />
     <None Include="Shaders\reflect.vs" />
     <None Include="Shaders\reflect.fs" />
+    <None Include="Shaders\PBR\pbrShader.vs" />
+    <None Include="Shaders\PBR\pbrShader.fs" />
+    <None Include="Shaders\PBR\pbrDeferedShading.fs" />
+    <None Include="Shaders\PBR\pbrDeferedShading.vs" />
   </ItemGroup>
 </Project>

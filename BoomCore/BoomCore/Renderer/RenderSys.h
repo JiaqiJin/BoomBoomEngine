@@ -67,6 +67,7 @@ namespace Kawaii
 		void createSunLightCamera(glm::vec3 target, float left, float right,
 			float bottom, float top, float near, float far);
 		void setSkyDome(const std::string& path, const std::string& pFix);
+		void setSkyDomeHdr(const std::string& path);
 		Camera3D::ptr createFPSCamera(glm::vec3 pos, glm::vec3 target);
 		Camera3D::ptr createTPSCamera(glm::vec3 pos, glm::vec3 target);
 

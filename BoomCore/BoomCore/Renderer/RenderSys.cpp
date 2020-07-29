@@ -28,6 +28,17 @@ namespace Kawaii
 		
 	}
 
+	void RenderSys::setSkyDomeHdr(const std::string& path)
+	{
+		if (m_skyDome != nullptr)
+			return;
+		unsigned int skyboxShader = m_shaderMgr->loadShader("skybox",
+			"./glsl/skybox.vert", "./glsl/skybox.frag");
+		unsigned int hdrTexIndex = m_textureMgr->loadTexture2DHdr("hdrTex", path);
+		unsigned int cubeTexIndex = m_textureMgr->loadTextureCubeHdrRaw("skyboxCubemap", nullptr, 1024, 1024);
+
+	}
+
 	void RenderSys::setSkyDome(const std::string& path, const std::string& pFix)
 	{
 		// set skydome background.

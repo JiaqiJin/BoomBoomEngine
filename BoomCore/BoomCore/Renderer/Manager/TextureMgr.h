@@ -54,6 +54,26 @@ namespace Kawaii
 			return m_units.size() - 1;
 		}
 
+		unsigned int loadTexture2DHdr(const std::string& name, const std::string& path)
+		{
+			if (m_unitMap.find(name) != m_unitMap.end())
+				return m_unitMap[name];
+			Texture::ptr tex(new Texture2DHdr(path));
+			m_units.push_back(tex);
+			m_unitMap[name] = m_units.size() - 1;
+			return m_units.size() - 1;
+		}
+
+		unsigned int loadTextureCubeHdrRaw(const std::string& name, const char* data,
+			int width, int height, bool mipmap = false)
+		{
+			if (m_unitMap.find(name) != m_unitMap.end())
+				return m_unitMap[name];
+			Texture::ptr tex(new TextureCubeHdrRaw(data, width, height, mipmap));
+			m_units.push_back(tex);
+			m_unitMap[name] = m_units.size() - 1;
+			return m_units.size() - 1;
+		}
 
 		unsigned int loadTextureDepth(const std::string& name, int width, int height)
 		{

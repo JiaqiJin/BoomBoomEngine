@@ -169,6 +169,7 @@
     <ClCompile Include="Renderer\Manager\ShaderMgr.cpp" />
     <ClCompile Include="Renderer\Manager\Texture.cpp" />
     <ClCompile Include="Renderer\Manager\TextureMgr.cpp" />
+    <ClCompile Include="Renderer\PostProcess\IBL.cpp" />
     <ClCompile Include="Renderer\PostProcess\SSAOProcess.cpp" />
     <ClCompile Include="Renderer\RenderTarget\InstanceRenderer.cpp" />
     <ClCompile Include="Renderer\RenderTarget\RenderTarget.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Renderer\Manager\Singleton.h" />
     <ClInclude Include="Renderer\Manager\Texture.h" />
     <ClInclude Include="Renderer\Manager\TextureMgr.h" />
+    <ClInclude Include="Renderer\PostProcess\IBL.h" />
     <ClInclude Include="Renderer\PostProcess\SSAOProcess.h" />
     <ClInclude Include="Renderer\RenderTarget\InstanceRenderer.h" />
     <ClInclude Include="Renderer\RenderTarget\RenderTarget.h" />
@@ -211,6 +213,10 @@
     <ClInclude Include="Renderer\RenderSys.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\PBR\pbrDeferedShading.fs" />
+    <None Include="Shaders\PBR\pbrDeferedShading.vs" />
+    <None Include="Shaders\PBR\pbrShader.fs" />
+    <None Include="Shaders\PBR\pbrShader.vs" />
     <None Include="Shaders\reflect.fs" />
     <None Include="Shaders\reflect.vs" />
     <None Include="Shaders\shader.fs" />
