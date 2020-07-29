@@ -20,9 +20,10 @@ namespace Kawaii
 		DeferedRender(int width, int height);
 		~DeferedRender() = default;
 
-		unsigned int getFrameBufferId();
 		void bindDeferedFramebuffer();
+		unsigned int getFrameBufferId();
 		void renderDeferedShading(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera
 			, const std::vector<PointLight::ptr>& pointLights);
 	};
+
 }

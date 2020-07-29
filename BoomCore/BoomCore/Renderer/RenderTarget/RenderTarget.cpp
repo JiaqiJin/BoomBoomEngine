@@ -16,10 +16,20 @@ namespace Kawaii
 		for (int x = 0; x < m_meshIndex.size(); ++x)
 		{
 			if (x < m_texIndex.size())
-				textureMgr->bindTexture(m_texIndex[x], 0);
-			else
-				textureMgr->unBindTexture(m_texIndex[x]);
+			{
+				textureMgr->bindTexture(m_texIndex[x].m_albedoTexIndex, 0);
+				textureMgr->bindTexture(m_texIndex[x].m_normalTexIndex, 1);
+				textureMgr->bindTexture(m_texIndex[x].m_roughTexIndex, 2);
+				textureMgr->bindTexture(m_texIndex[x].m_metallicIndex, 3);
+			}
 			meshMgr->drawMesh(m_meshIndex[x], m_instance, m_instanceNum);
+			if (x < m_texIndex.size())
+			{
+				textureMgr->unBindTexture(m_texIndex[x].m_albedoTexIndex);
+				textureMgr->unBindTexture(m_texIndex[x].m_normalTexIndex);
+				textureMgr->unBindTexture(m_texIndex[x].m_roughTexIndex);
+				textureMgr->unBindTexture(m_texIndex[x].m_metallicIndex);
+			}
 		}
 	}
 
@@ -30,7 +40,6 @@ namespace Kawaii
 			shader = ShaderMgr::getSingleton()->getShader(m_shaderIndex);
 		shader->bind();
 		shader->setInt("image", 0);
-		shader->setBool("receiveShadow", m_receiveShadow);
 		shader->setMat4("viewMatrix", glm::mat4(glm::mat3(camera->getViewMatrix())));
 		shader->setMat4("projectMatrix", camera->getProjectMatrix());
 		this->renderImp();
@@ -45,8 +54,19 @@ namespace Kawaii
 		shader->bind();
 		if (sunLight)
 			sunLight->setLightUniform(shader, camera);
-		shader->setInt("image", 0);
-		
+		shader->setInt("albedoMap", 0);
+		shader->setInt("normalMap", 1);
+		shader->setInt("roughMap", 2);
+		shader->setInt("metallicMap", 3);
+		shader->setFloat("nearPlane", camera->getNear());
+		shader->setFloat("farPlane", camera->getFar());
+		// depth map.
+		Texture::ptr depthMap = TextureMgr::getSingleton()->getTexture("shadowDepth");
+		if (depthMap != nullptr)
+		{
+			shader->setInt("depthMap", 1);
+			depthMap->bind(1);
+		}
 		// light space matrix.
 		if (lightCamera != nullptr)
 			shader->setMat4("lightSpaceMatrix",
@@ -59,6 +79,7 @@ namespace Kawaii
 		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
 		shader->setMat4("viewMatrix", camera->getViewMatrix());
 		shader->setMat4("projectMatrix", camera->getProjectMatrix());
+		shader->setMat3("normalMatrix", m_transformation.getNormalMatrix());
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
 	}

@@ -38,6 +38,7 @@ namespace Kawaii
 	public:
 		typedef std::shared_ptr<Texture2D> ptr;
 
+		Texture2D(unsigned char* images, int width, int height, int channel);
 		Texture2D(const std::string& path, glm::vec4 bColor = glm::vec4(1.0f));
 		~Texture2D();
 
@@ -48,6 +49,8 @@ namespace Kawaii
 		virtual void setupTexture(const std::string& path, const std::string& pFix);
 		virtual void clearTexture();
 	};
+
+
 
 	class TextureCube : public Texture
 	{

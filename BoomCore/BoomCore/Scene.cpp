@@ -15,13 +15,15 @@ void SponzaScene::initializeScene(Kawaii::RenderSys::ptr renderSys)
 	unsigned int pbrShader = shaderMgr->loadShader("pbrShader",
 		"Shaders/PBR/pbrShader.vs", "Shaders/PBR/pbrShader.fs");
 
-	StaticModelRenderer* sponza = new StaticModelRenderer(pbrShader, "res/lamp/lamp.obj");
+	StaticModelRenderer* sponza = new StaticModelRenderer(pbrShader,
+		"./res/lamp/lamp.obj");
+	
 	sponza->getTransformation()->setScale(glm::vec3(0.2, 0.2, 0.2));
-
+	
 	renderSys->addRenderTarget(sponza);
+	
 
-	renderSys->createSunLightCamera(glm::vec3(0.0f), -25.0f, +25.0f,
-		-25.0f, +25.0f, 1.0f, 300.0f);
+	renderSys->setSunLight(glm::vec3(0.1f, 1.0f, 0.3f), glm::vec3(1.0f));
 
 	srand(time(nullptr));
 	for (unsigned int x = 0; x < 128; ++x)
@@ -38,7 +40,5 @@ void SponzaScene::initializeScene(Kawaii::RenderSys::ptr renderSys)
 
 		renderSys->addPointLight(pos, radiance);
 	}
-
-
 
 }

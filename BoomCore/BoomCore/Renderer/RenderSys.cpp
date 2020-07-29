@@ -50,7 +50,7 @@ namespace Kawaii
 		if (m_skyDome != nullptr)
 			return;
 		unsigned int skyboxShader = m_shaderMgr->loadShader("skybox",
-			"./glsl/skybox.vert", "./glsl/skybox.frag");
+			"Shaders/skybox.vs", "Shaders/skybox.fs");
 		unsigned int hdrTexIndex = m_textureMgr->loadTexture2DHdr("hdrTex", path);
 		unsigned int cubeTexIndex = m_textureMgr->loadTextureCubeHdrRaw("skyboxCubemap", nullptr, 1024, 1024);
 

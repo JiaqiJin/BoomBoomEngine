@@ -13,8 +13,7 @@ namespace Kawaii
 			"Shaders/PBR/pbrDeferedShading.vs", "Shaders/PBR/pbrDeferedShading.fs");
 		m_deferedFramebuffer = std::shared_ptr<FrameBuffer>(new FrameBuffer(
 			width, height, "deferedDepth", { "deferedPos", "deferedNormal", "deferedAlbedo",
-			"deferedRoughness" }, true));
-		
+			"deferedRoughness" }, true));		
 	}
 
 	unsigned int DeferedRender::getFrameBufferId()

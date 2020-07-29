@@ -8,6 +8,31 @@
 
 namespace Kawaii
 {
+	Texture2D::Texture2D(unsigned char* images, int width, int height, int channel)
+		:m_width(width), m_height(height), m_channel(channel)
+	{
+		// texture unit generation.
+		glGenTextures(1, &m_id);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+		// filter setting.
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// load the image.
+		GLenum format;
+		if (m_channel == 1)
+			format = GL_RED;
+		else if (m_channel == 3)
+			format = GL_RGB;
+		else if (m_channel == 4)
+			format = GL_RGBA;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height,
+			0, format, GL_UNSIGNED_BYTE, images);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	Texture2D::Texture2D(const std::string& path, glm::vec4 bColor)
 	{
 		m_borderColor = bColor;
