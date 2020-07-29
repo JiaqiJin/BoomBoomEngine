@@ -17,5 +17,7 @@ namespace Kawaii
 		static void convoluteSpecularIntegral(int width, int height, unsigned int cubemapTexIndex,
 			unsigned int prefilteredTexIndex);
 
+		static void convoluteSpecularBRDFIntegral(int width, int height, unsigned int brdfLutTexIndex);
+
 	};
 }

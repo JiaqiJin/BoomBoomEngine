@@ -50,6 +50,10 @@ namespace Kawaii
 		unsigned int prefilteredTexIndex = m_textureMgr->loadTextureCubeHdrRaw("prefilteredMap", nullptr, 256, 256, true);
 		IBLAux::convoluteSpecularIntegral(256, 256, cubeTexIndex, prefilteredTexIndex);
 
+		// generate brdf lookup texture.
+		unsigned int brdfLutTexIndex = m_textureMgr->loadTexture2DHdrRaw("brdfLutMap", nullptr, 512, 512);
+		IBLAux::convoluteSpecularBRDFIntegral(512, 512, brdfLutTexIndex);
+
 		unsigned int mesh = m_meshMgr->loadMesh(new Sphere(1.0f, 10, 10));
 		m_skyDome = std::make_shared<SkyDome>(skyboxShader);
 		PBRMaterial mat;

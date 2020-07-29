@@ -176,4 +176,34 @@ namespace Kawaii
 		texMgr->unBindTexture(cubemapTexIndex);
 	}
 
+	void IBLAux::convoluteSpecularBRDFIntegral(int width, int height, unsigned int brdfLutTexIndex)
+	{
+		// manager.
+		TextureMgr::ptr texMgr = TextureMgr::getSingleton();
+		ShaderMgr::ptr shaderMgr = ShaderMgr::getSingleton();
+		// load shader.
+		unsigned int shaderIndex = shaderMgr->loadShader("genBrdfLUT",
+			"Shaders/genBrdfLUT.vert", "Shaders/genBrdfLUT.frag");
+		// load quad mesh.
+		Mesh::ptr quadMesh = std::shared_ptr<Mesh>(new ScreenQuad());
+		FrameBuffer::ptr framebuffer = std::shared_ptr<FrameBuffer>(
+			new FrameBuffer(width, height, "brdfDepth", {}, true));
+		Shader::ptr shader = shaderMgr->getShader(shaderIndex);
+
+		framebuffer->bind();
+		glDisable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		GLuint brdfLutTexId = texMgr->getTexture(brdfLutTexIndex)->getTextureId();
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLutTexId, 0);
+
+		shader->bind();
+		quadMesh->draw(false, 0);
+		shader->unBind();
+		framebuffer->unBind();
+	}
+
 }
