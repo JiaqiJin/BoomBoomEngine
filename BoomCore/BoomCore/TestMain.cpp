@@ -49,11 +49,11 @@ int main()
 
 	//StaticModelRenderer* model = new StaticModelRenderer(lightShader,
 		//"res/sponza_pbr/sponza_pbr.obj");
-	StaticModelRenderer* model = new StaticModelRenderer(lightShader,
-		"res/nanosuit/nanosuit.obj");
-	Transform3D* trans = model->getTransformation();
+	//StaticModelRenderer* model = new StaticModelRenderer(lightShader,
+		//"res/nanosuit/nanosuit.obj");
+	/*Transform3D* trans = model->getTransformation();
 	trans->scale(glm::vec3(0.01f));
-	trans->translate(glm::vec3(2.5, 0.0, -2.0));
+	trans->translate(glm::vec3(2.5, 0.0, -2.0));*/
 
 	RenderTarget* box = new SimpleObject(lightShader);
 	box->addMesh(cubeMesh);
