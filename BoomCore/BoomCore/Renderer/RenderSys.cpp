@@ -42,6 +42,12 @@ namespace Kawaii
 		//convert hdrmap to cubemap
 		IBLAux::convertToCubemap(1024, 1024, hdrTexIndex, cubeTexIndex);
 
+		// precompute the irradiance map.
+		unsigned int irradianceTexIndex = m_textureMgr->loadTextureCubeHdrRaw("irradianceMap", nullptr, 64, 64);
+		IBLAux::convoluteDiffuseIntegral(64, 64, cubeTexIndex, irradianceTexIndex);
+
+
+
 		unsigned int mesh = m_meshMgr->loadMesh(new Sphere(1.0f, 10, 10));
 		m_skyDome = std::make_shared<SkyDome>(skyboxShader);
 		PBRMaterial mat;
