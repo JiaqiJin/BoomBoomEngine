@@ -132,9 +132,9 @@ void main()
 	// ************************************************************************************
 
 	// shadow
-	float shadow = 1.0f;
+	//float shadow = 1.0f;
 	vec4 FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0f);
-	shadow = 1.0f - shadowCalculation(FragPosLightSpace, 0.0f);
+	//shadow = 1.0f - shadowCalculation(FragPosLightSpace, 0.0f);
 
 	// ambient lighting.
 	vec3 ambientS = fresnelSchlickRoughness(max(dot(normal, viewDir), 0.0f), F0, roughness);
@@ -149,7 +149,7 @@ void main()
 	
 	vec3 ambient = (albedo * irradiance * ambientD + envSpecular) * ao;
 
-	fragColor.xyz = ambient + fragColor.xyz * shadow + pointLightRadiance;
+	fragColor.xyz = ambient + fragColor.xyz  + pointLightRadiance;
 	
 	// glow map.
 	float brightness = dot(fragColor.rgb / (fragColor.rgb + vec3(1.0f)), vec3(0.2126, 0.7152, 0.0722));

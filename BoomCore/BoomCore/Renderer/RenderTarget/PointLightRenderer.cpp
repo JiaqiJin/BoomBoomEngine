@@ -86,5 +86,8 @@ namespace Kawaii
 		shader->unBind();
 		glDisable(GL_PROGRAM_POINT_SIZE);
 	}
-
+	void PointLightRenderer::renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera)
+	{
+		return;
+	}
 }

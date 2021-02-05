@@ -7,10 +7,10 @@
 #include "../Light.h"
 #include "../Camera/Camera3D.h"
 #include "../Camera/Transform3D.h"
+#include "AABBBoundingBox.h"
 
 namespace Kawaii
 {
-
 	class PBRMaterial
 	{
 	public:
@@ -29,7 +29,8 @@ namespace Kawaii
 		bool m_visiable = true;
 		int m_instanceNum = 0;
 		Transform3D m_transformation;
-	
+		AABBBoundingBox m_boundingBox;
+
 		unsigned int m_shaderIndex;
 		std::vector<PBRMaterial> m_texIndex;
 		std::vector<unsigned int> m_meshIndex;
@@ -40,10 +41,11 @@ namespace Kawaii
 		RenderTarget() = default;
 		virtual ~RenderTarget() = default;
 
-		
+		virtual AABBBoundingBox& getBoundingBox();
+
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
 			Shader::ptr shader = nullptr) = 0;
-		
+		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera) = 0;
 
 		void setVisiable(bool target) { m_visiable = target; }
 		bool isVisiable()const { return m_visiable; }
@@ -71,8 +73,8 @@ namespace Kawaii
 
 		unsigned int addRenderer(RenderTarget* object)
 		{
-			RenderTarget::ptr drawable(object);
-			m_list.push_back(drawable);
+			RenderTarget::ptr renderer(object);
+			m_list.push_back(renderer);
 			return m_list.size() - 1;
 		}
 
@@ -82,6 +84,14 @@ namespace Kawaii
 			for (auto& it : m_list)
 				it->render(camera, sunLight, lightCamera, shader);
 		}
+
+		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera)
+		{
+			for (auto& it : m_list)
+				it->renderDepth(shader, lightCamera);
+		}
+
+		virtual AABBBoundingBox& getBoundingBox();
 
 	};
 
@@ -99,24 +109,25 @@ namespace Kawaii
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
 			Shader::ptr shader = nullptr);
-		
+		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera) {}
 	};
 
-	class SimpleObject : public RenderTarget
+	class SimpleDrawable : public RenderTarget
 	{
 	public:
 
-		SimpleObject(unsigned int shaderIndex)
+		SimpleDrawable(unsigned int shaderIndex)
 		{
 			m_shaderIndex = shaderIndex;
 		}
 
-		~SimpleObject() = default;
+		~SimpleDrawable() = default;
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
 			Shader::ptr shader = nullptr);
-		
+		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera);
 	};
+
 
 }
 

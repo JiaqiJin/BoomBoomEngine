@@ -29,7 +29,10 @@ namespace Kawaii
 		m_pointLightRenderer = nullptr;
 		// shadow system.
 		setSunLight(glm::vec3(0.1f, 1.0f, 0.3f), glm::vec3(0.6f));
-		
+		m_shadowSys = std::shared_ptr<ShadowSystem>(new ShadowSystem(4096, 4096));
+
+		// bloom effect.
+		//m_glowBlur = std::shared_ptr<GaussianBlur>(new GaussianBlur(m_width, m_height));
 
 		// initialization.
 		resize(width, height);
@@ -180,6 +183,9 @@ namespace Kawaii
 		if (m_renderList == nullptr)
 			return;
 
+		// render the shadow.
+		m_shadowSys->renderShadow(m_width, m_height, m_renderList, m_sunLight);
+
 		// point light objects genration.
 		if (m_pointLightRenderer == nullptr && m_pointLights.size() > 0)
 		{
@@ -215,13 +221,18 @@ namespace Kawaii
 			glDepthFunc(m_renderState.m_depthFunc);
 
 			// render the drawable list.
-			m_renderList->render(m_camera, m_sunLight,m_lightCamera);
+			m_renderList->render(m_camera, m_sunLight, m_shadowSys->getLightCamera());
 
 			// render the light source.
 			if (m_pointLightRenderer != nullptr)
 				m_pointLightRenderer->render(m_camera, m_sunLight, nullptr, nullptr);
 		}
 
+		// ssao.
+		//m_deferedRender->ssaoFactorGeneration(m_camera);
+
+		// defered shading and forward shading.
+		//m_glowBlur->bindGaussianFramebuffer();
 		{
 			glDisable(GL_BLEND);
 			glDisable(GL_CULL_FACE);
@@ -231,7 +242,7 @@ namespace Kawaii
 			glClearColor(1.0, 1.0, 1.0, 1.0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			m_deferedRender->renderDeferedShading(m_camera, m_sunLight,
-				m_lightCamera, m_pointLights);
+				m_shadowSys->getLightCamera(), m_pointLights);
 
 			// render the skydome.
 			if (m_skyDome != nullptr)
@@ -241,6 +252,9 @@ namespace Kawaii
 				m_skyDome->render(m_camera, m_sunLight, nullptr);
 			}
 		}
+
+		// bloom effect.
+		//m_glowBlur->renderGaussianBlurEffect();
 	}
 
 	// just move light source for demo.

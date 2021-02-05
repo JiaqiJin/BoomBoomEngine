@@ -8,6 +8,21 @@
 
 namespace Kawaii
 {
+	AABBBoundingBox& RenderTarget::getBoundingBox()
+	{
+		if (!m_boundingBox.isValid() || m_transformation.isDirty())
+		{
+			m_boundingBox.reset();
+			MeshMgr::ptr meshMgr = MeshMgr::getSingleton();
+			for (unsigned int i = 0; i < m_meshIndex.size(); ++i)
+			{
+				Mesh::ptr mesh = meshMgr->getMesh(m_meshIndex[i]);
+				m_boundingBox.addBoundingBox(mesh->getVertices(), m_transformation.getWorldMatrix());
+			}
+		}
+		return m_boundingBox;
+	}
+
 	void RenderTarget::renderImp()
 	{
 		// render each mesh.
@@ -46,7 +61,7 @@ namespace Kawaii
 		ShaderMgr::getSingleton()->unBindShader();
 	}
 
-	void SimpleObject::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
+	void SimpleDrawable::render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader)
 	{
 		if (!m_visiable) return;
 		if (shader == nullptr)
@@ -84,5 +99,29 @@ namespace Kawaii
 		ShaderMgr::getSingleton()->unBindShader();
 	}
 
+	void SimpleDrawable::renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera)
+	{
+		if (!m_visiable || !m_produceShadow)
+			return;
+		shader->bind();
+		shader->setBool("instance", false);
+		shader->setMat4("lightSpaceMatrix",
+			lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
+		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
+		this->renderImp();
+		ShaderMgr::getSingleton()->unBindShader();
+	}
+
+
+	AABBBoundingBox& RenderTargetList::getBoundingBox()
+	{
+		m_boundingBox.reset();
+		for (unsigned int i = 0; i < m_list.size(); ++i)
+		{
+			RenderTarget::ptr renderer = m_list[i];
+			m_boundingBox.mergeBoundingBox(renderer->getBoundingBox());
+		}
+		return m_boundingBox;
+	}
 	
 }

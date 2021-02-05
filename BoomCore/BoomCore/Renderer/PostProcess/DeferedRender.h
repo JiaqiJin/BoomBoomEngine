@@ -5,11 +5,13 @@
 #include "../Manager/Geometry.h"
 #include "../Manager/FrameBuffer.h"
 
+
 namespace Kawaii
 {
 	class DeferedRender
 	{
 	private:
+		
 		unsigned int m_screenQuadIndex;
 		unsigned int m_deferedShaderIndex;
 		FrameBuffer::ptr m_deferedFramebuffer;
@@ -22,6 +24,7 @@ namespace Kawaii
 
 		void bindDeferedFramebuffer();
 		unsigned int getFrameBufferId();
+		//void ssaoFactorGeneration(Camera3D::ptr camera);
 		void renderDeferedShading(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera
 			, const std::vector<PointLight::ptr>& pointLights);
 	};

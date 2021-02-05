@@ -135,4 +135,21 @@ namespace Kawaii
 		virtual void clearTexture();
 	};
 
+	class TextureRaw : public Texture
+	{
+	private:
+		int m_width, m_height;
+
+	public:
+		TextureRaw(int width, int height, const char* data);
+		~TextureRaw();
+
+		virtual void bind(unsigned int unit);
+		virtual void unBind();
+
+	private:
+		virtual void setupTexture(const std::string& path, const std::string& pFix);
+		virtual void clearTexture();
+	};
+
 }

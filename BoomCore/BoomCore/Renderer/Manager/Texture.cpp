@@ -373,4 +373,49 @@ namespace Kawaii
 	{
 		glDeleteTextures(1, &m_id);
 	}
+
+
+	TextureRaw::TextureRaw(int width, int height, const char* data)
+		:m_width(width), m_height(height)
+	{
+		// generate depth buffer.
+		glGenTextures(1, &m_id);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_width, m_height,
+			0, GL_RGB, GL_FLOAT, data);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// here must be GL_NEAREST, otherwise there is a bug.
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	TextureRaw::~TextureRaw()
+	{
+		clearTexture();
+	}
+
+	void TextureRaw::bind(unsigned int unit)
+	{
+		glActiveTexture(GL_TEXTURE0 + unit);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+	}
+
+	void TextureRaw::unBind()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void TextureRaw::setupTexture(const std::string& path, const std::string& pFix)
+	{
+		return;
+	}
+
+	void TextureRaw::clearTexture()
+	{
+		glDeleteTextures(1, &m_id);
+	}
+
+
 }

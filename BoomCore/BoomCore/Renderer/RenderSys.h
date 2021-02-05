@@ -9,6 +9,8 @@
 #include "Manager/FrameBuffer.h"
 #include "RenderTarget/PointLightRenderer.h"
 #include "PostProcess/DeferedRender.h"
+#include "ShadowSystem.h"
+
 
 namespace Kawaii
 {
@@ -36,6 +38,10 @@ namespace Kawaii
 	class RenderSys
 	{
 	private:
+		// gaussian blur.
+		//GaussianBlur::ptr m_glowBlur;
+
+
 		// skydome.
 		SkyDome::ptr m_skyDome;
 		DirectionalLight::ptr m_sunLight;
@@ -45,6 +51,7 @@ namespace Kawaii
 		// render state.
 		RenderState m_renderState;
 		int m_width, m_height;
+		ShadowSystem::ptr m_shadowSys;
 
 		FrameBuffer::ptr m_shadowDepthBuffer;
 		PointLightRenderer::ptr m_pointLightRenderer;
@@ -81,7 +88,7 @@ namespace Kawaii
 		MeshMgr::ptr getMeshMgr() { return m_meshMgr; }
 		ShaderMgr::ptr getShaderMgr() { return m_shaderMgr; }
 		TextureMgr::ptr getTextureMgr() { return m_textureMgr; }
-
+		//GaussianBlur::ptr getGaussianBlur() { return m_glowBlur; }
 		// Setter.
 		void setPolygonMode(GLenum mode);
 		void setClearMask(GLbitfield mask);

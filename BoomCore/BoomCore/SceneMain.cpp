@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
 	Scene::ptr scene = shared_ptr<SponzaScene>(new SponzaScene());
 	scene->initializeScene(renderSys);
 
-	renderSys->createSunLightCamera(glm::vec3(0.0f), -25.0f, +25.0f,
-		-25.0f, +25.0f, 1.0f, 300.0f);
+	/*renderSys->createSunLightCamera(glm::vec3(0.0f), -25.0f, +25.0f,
+		-25.0f, +25.0f, 1.0f, 300.0f);*/
 
 	renderSys->setSkyDomeHdr("res/Hdr/Mans_Outside_2k.hdr");
 

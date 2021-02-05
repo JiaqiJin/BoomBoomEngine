@@ -18,11 +18,10 @@ void SponzaScene::initializeScene(Kawaii::RenderSys::ptr renderSys)
 	StaticModelRenderer* sponza = new StaticModelRenderer(pbrShader,
 		"./res/lamp/lamp.obj");
 	
-	sponza->getTransformation()->setScale(glm::vec3(0.2, 0.2, 0.2));
+	sponza->getTransformation()->setScale(glm::vec3(1, 1, 1));
 	
 	renderSys->addRenderTarget(sponza);
 	
-
 	renderSys->setSunLight(glm::vec3(0.1f, 1.0f, 0.3f), glm::vec3(1.0f));
 
 	srand(time(nullptr));

@@ -39,7 +39,13 @@ namespace Kawaii
 		shader->setInt("metallicMap", 3);
 		shader->setFloat("nearPlane", camera->getNear());
 		shader->setFloat("farPlane", camera->getFar());
-	
+		// depth map.
+		Texture::ptr depthMap = TextureMgr::getSingleton()->getTexture("shadowDepth");
+		if (depthMap != nullptr)
+		{
+			shader->setInt("depthMap", 4);
+			depthMap->bind(4);
+		}
 		if (lightCamera != nullptr)
 			shader->setMat4("lightSpaceMatrix",
 				lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
@@ -52,6 +58,19 @@ namespace Kawaii
 		shader->setMat4("viewMatrix", camera->getViewMatrix());
 		shader->setMat4("projectMatrix", camera->getProjectMatrix());
 		shader->setMat3("normalMatrix", m_transformation.getNormalMatrix());
+		this->renderImp();
+		ShaderMgr::getSingleton()->unBindShader();
+	}
+
+	void StaticModelRenderer::renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera)
+	{
+		if (!m_visiable || !m_produceShadow)
+			return;
+		shader->bind();
+		shader->setBool("instance", false);
+		shader->setMat4("lightSpaceMatrix",
+			lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
+		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
 	}
@@ -93,7 +112,6 @@ namespace Kawaii
 	void StaticModelRenderer::processMesh(aiMesh* mesh, const aiScene* scene,
 		unsigned int& meshIndex, PBRMaterial& pbrMat)
 	{
-
 		// process mesh.
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;

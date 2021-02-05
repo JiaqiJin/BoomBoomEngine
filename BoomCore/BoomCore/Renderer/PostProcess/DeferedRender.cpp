@@ -14,7 +14,20 @@ namespace Kawaii
 		m_deferedFramebuffer = std::shared_ptr<FrameBuffer>(new FrameBuffer(
 			width, height, "deferedDepth", { "deferedPos", "deferedNormal", "deferedAlbedo",
 			"deferedRoughness" }, true));		
+
+		// ssao.
+		/*m_ssaoProcess = std::shared_ptr<SSAOProcess>(new SSAOProcess(
+			width, height, m_screenQuadIndex));*/
+
 	}
+
+	/*void DeferedRender::ssaoFactorGeneration(Camera3D::ptr camera)
+	{
+		unsigned int posTexIndex = TextureMgr::getSingleton()->getTextureIndex("deferedPos");
+		unsigned int normalTexIndex = TextureMgr::getSingleton()->getTextureIndex("deferedNormal");
+		unsigned int depthTexIndex = TextureMgr::getSingleton()->getTextureIndex("deferedDepth");
+		m_ssaoProcess->SSAOProcessDepth(camera, posTexIndex, normalTexIndex, depthTexIndex);
+	}*/
 
 	unsigned int DeferedRender::getFrameBufferId()
 	{

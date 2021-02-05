@@ -31,6 +31,6 @@ namespace Kawaii
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
 			Shader::ptr shader = nullptr);
-
+		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera);
 	};
 }
