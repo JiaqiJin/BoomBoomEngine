@@ -33,19 +33,8 @@ namespace Kawaii
 		}
 		if (sunLight)
 			sunLight->setLightUniform(shader, camera);
-		shader->setInt("albedoMap", 0);
-		shader->setInt("normalMap", 1);
-		shader->setInt("roughMap", 2);
-		shader->setInt("metallicMap", 3);
-		shader->setFloat("nearPlane", camera->getNear());
-		shader->setFloat("farPlane", camera->getFar());
-		// depth map.
-		Texture::ptr depthMap = TextureMgr::getSingleton()->getTexture("shadowDepth");
-		if (depthMap != nullptr)
-		{
-			shader->setInt("depthMap", 4);
-			depthMap->bind(4);
-		}
+		shader->setInt("image", 0);
+	
 		if (lightCamera != nullptr)
 			shader->setMat4("lightSpaceMatrix",
 				lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
@@ -57,20 +46,6 @@ namespace Kawaii
 		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
 		shader->setMat4("viewMatrix", camera->getViewMatrix());
 		shader->setMat4("projectMatrix", camera->getProjectMatrix());
-		shader->setMat3("normalMatrix", m_transformation.getNormalMatrix());
-		this->renderImp();
-		ShaderMgr::getSingleton()->unBindShader();
-	}
-
-	void StaticModelRenderer::renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera)
-	{
-		if (!m_visiable || !m_produceShadow)
-			return;
-		shader->bind();
-		shader->setBool("instance", false);
-		shader->setMat4("lightSpaceMatrix",
-			lightCamera->getProjectMatrix() * lightCamera->getViewMatrix());
-		shader->setMat4("modelMatrix", m_transformation.getWorldMatrix());
 		this->renderImp();
 		ShaderMgr::getSingleton()->unBindShader();
 	}
@@ -78,9 +53,11 @@ namespace Kawaii
 	void StaticModelRenderer::loadModel(const std::string& path)
 	{
 		// load the model file.
+		m_min = glm::vec3(+FLT_MAX);
+		m_max = glm::vec3(-FLT_MAX);
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate
-			| aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
+			| aiProcess_FlipUVs | aiProcess_GenNormals);
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
@@ -96,11 +73,11 @@ namespace Kawaii
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			unsigned int meshIndex;
-			PBRMaterial pbrMat;
-			processMesh(mesh, scene, meshIndex, pbrMat);
+			unsigned int meshIndex, texIndex = 1000000;
+			processMesh(mesh, scene, meshIndex, texIndex);
 			this->addMesh(meshIndex);
-			this->addPbrTexture(pbrMat);
+			if (texIndex != 1000000)
+				this->addTexture(texIndex);
 		}
 		// process children' nodes.
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -110,7 +87,7 @@ namespace Kawaii
 	}
 
 	void StaticModelRenderer::processMesh(aiMesh* mesh, const aiScene* scene,
-		unsigned int& meshIndex, PBRMaterial& pbrMat)
+		unsigned int& meshIndex, unsigned int& texIndex)
 	{
 		// process mesh.
 		std::vector<Vertex> vertices;
@@ -130,16 +107,27 @@ namespace Kawaii
 					mesh->mTextureCoords[0][x].x, mesh->mTextureCoords[0][x].y);
 			else
 				vertex.texcoord = glm::vec2(0.0f, 0.0f);
-			// color.
 			vertex.color = vertex.normal;
-			// tangent.
-			vertex.tangent = glm::vec3(
-				mesh->mTangents[x].x, mesh->mTangents[x].y, mesh->mTangents[x].z);
-			// bitangent.
-			vertex.bitangent = glm::vec3(
-				mesh->mBitangents[x].x, mesh->mBitangents[x].y, mesh->mBitangents[x].z);
-
 			vertices.push_back(vertex);
+			// bounding box.
+			if (mesh->mVertices[x].x < m_min.x)
+				m_min.x = mesh->mVertices[x].x;
+			if (mesh->mVertices[x].y < m_min.y)
+				m_min.y = mesh->mVertices[x].y;
+			if (mesh->mVertices[x].z < m_min.z)
+				m_min.z = mesh->mVertices[x].z;
+			if (mesh->mVertices[x].x > m_max.x)
+				m_max.x = mesh->mVertices[x].x;
+			if (mesh->mVertices[x].y > m_max.y)
+				m_max.y = mesh->mVertices[x].y;
+			if (mesh->mVertices[x].z > m_max.z)
+				m_max.z = mesh->mVertices[x].z;
+			//m_min.x = std::min(m_min.x, mesh->mVertices[x].x);
+			//m_min.y = std::min(m_min.y, mesh->mVertices[x].y);
+			//m_min.z = std::min(m_min.z, mesh->mVertices[x].z);
+			//m_max.x = std::max(m_max.x, mesh->mVertices[x].x);
+			//m_max.y = std::max(m_max.y, mesh->mVertices[x].y);
+			//m_max.z = std::max(m_max.z, mesh->mVertices[x].z);
 		}
 
 		for (unsigned int x = 0; x < mesh->mNumFaces; ++x)
@@ -153,36 +141,15 @@ namespace Kawaii
 		Mesh* target = new Mesh(vertices, indices);
 		meshIndex = MeshMgr::getSingleton()->loadMesh(target);
 
-		// process pbr material.
+		// process material.
 		TextureMgr::ptr textureMgr = TextureMgr::getSingleton();
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			aiString nameStr;
-
-			// abledo texture.
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &nameStr);
 			std::string name(nameStr.C_Str());
-			if (!name.empty())
-				pbrMat.m_albedoTexIndex = textureMgr->loadTexture2D(name, m_directory + "/" + name);
-
-			// normal texture.
-			material->GetTexture(aiTextureType_HEIGHT, 0, &nameStr);
-			name = nameStr.C_Str();
-			if (!name.empty())
-				pbrMat.m_normalTexIndex = textureMgr->loadTexture2D(name, m_directory + "/" + name);
-
-			// roughness texture.
-			material->GetTexture(aiTextureType_SHININESS, 0, &nameStr);
-			name = nameStr.C_Str();
-			if (!name.empty())
-				pbrMat.m_roughTexIndex = textureMgr->loadTexture2D(name, m_directory + "/" + name);
-
-			// metallic texture.
-			material->GetTexture(aiTextureType_AMBIENT, 0, &nameStr);
-			name = nameStr.C_Str();
-			if (!name.empty())
-				pbrMat.m_metallicIndex = textureMgr->loadTexture2D(name, m_directory + "/" + name);
+			texIndex = textureMgr->loadTexture2D(name, m_directory + "/" + name);
 		}
 	}
 

@@ -7,10 +7,10 @@
 #include "../Light.h"
 #include "../Camera/Camera3D.h"
 #include "../Camera/Transform3D.h"
-#include "AABBBoundingBox.h"
 
 namespace Kawaii
 {
+
 	class PBRMaterial
 	{
 	public:
@@ -25,15 +25,14 @@ namespace Kawaii
 	protected:
 		bool m_instance = false;
 		bool m_receiveShadow = true;
-		bool m_produceShadow = true;
 		bool m_visiable = true;
 		int m_instanceNum = 0;
 		Transform3D m_transformation;
-		AABBBoundingBox m_boundingBox;
 
 		unsigned int m_shaderIndex;
-		std::vector<PBRMaterial> m_texIndex;
+		std::vector<unsigned int> m_texIndex;
 		std::vector<unsigned int> m_meshIndex;
+		std::vector<PBRMaterial> m_PBRtexIndex;
 
 	public:
 		typedef std::shared_ptr<RenderTarget> ptr;
@@ -41,20 +40,29 @@ namespace Kawaii
 		RenderTarget() = default;
 		virtual ~RenderTarget() = default;
 
-		virtual AABBBoundingBox& getBoundingBox();
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr) = 0;
 
-		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
-			Shader::ptr shader = nullptr) = 0;
-		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera) = 0;
+		virtual void getAABB(glm::vec3& min, glm::vec3& max) {}
 
 		void setVisiable(bool target) { m_visiable = target; }
-		bool isVisiable()const { return m_visiable; }
-		void setProduceShadow(bool target) { m_produceShadow = target; }
 		void setReceiveShadow(bool target) { m_receiveShadow = target; }
 
-		void addPbrTexture(PBRMaterial matIndex) { m_texIndex.push_back(matIndex); }
-		void addMesh(unsigned int meshIndex) { m_meshIndex.push_back(meshIndex); }
-		Transform3D* getTransformation() { return &m_transformation; }
+		void addPbrTexture(PBRMaterial matIndex) { m_PBRtexIndex.push_back(matIndex); }
+
+		void addTexture(unsigned int texIndex)
+		{
+			m_texIndex.push_back(texIndex);
+		}
+
+		void addMesh(unsigned int meshIndex)
+		{
+			m_meshIndex.push_back(meshIndex);
+		}
+
+		Transform3D* getTransformation()
+		{
+			return &m_transformation;
+		}
 
 	protected:
 		void renderImp();
@@ -73,25 +81,16 @@ namespace Kawaii
 
 		unsigned int addRenderer(RenderTarget* object)
 		{
-			RenderTarget::ptr renderer(object);
-			m_list.push_back(renderer);
+			RenderTarget::ptr RenderTarget(object);
+			m_list.push_back(RenderTarget);
 			return m_list.size() - 1;
 		}
 
-		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
-			Shader::ptr shader = nullptr)
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr)
 		{
 			for (auto& it : m_list)
 				it->render(camera, sunLight, lightCamera, shader);
 		}
-
-		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera)
-		{
-			for (auto& it : m_list)
-				it->renderDepth(shader, lightCamera);
-		}
-
-		virtual AABBBoundingBox& getBoundingBox();
 
 	};
 
@@ -107,28 +106,24 @@ namespace Kawaii
 
 		SkyDome() = default;
 
-		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
-			Shader::ptr shader = nullptr);
-		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera) {}
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
+	
 	};
 
-	class SimpleDrawable : public RenderTarget
+	class SimpleObject : public RenderTarget
 	{
 	public:
 
-		SimpleDrawable(unsigned int shaderIndex)
+		SimpleObject(unsigned int shaderIndex)
 		{
 			m_shaderIndex = shaderIndex;
 		}
 
-		~SimpleDrawable() = default;
+		~SimpleObject() = default;
 
-		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera,
-			Shader::ptr shader = nullptr);
-		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera);
+		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
+	
 	};
-
-
 }
 
 //

@@ -38,7 +38,6 @@ namespace Kawaii
 	public:
 		typedef std::shared_ptr<Texture2D> ptr;
 
-		Texture2D(unsigned char* images, int width, int height, int channel);
 		Texture2D(const std::string& path, glm::vec4 bColor = glm::vec4(1.0f));
 		~Texture2D();
 
@@ -49,8 +48,6 @@ namespace Kawaii
 		virtual void setupTexture(const std::string& path, const std::string& pFix);
 		virtual void clearTexture();
 	};
-
-
 
 	class TextureCube : public Texture
 	{
@@ -92,57 +89,6 @@ namespace Kawaii
 	public:
 		TextureColor(int width, int height, bool hdr = false);
 		~TextureColor();
-
-		virtual void bind(unsigned int unit);
-		virtual void unBind();
-
-	private:
-		virtual void setupTexture(const std::string& path, const std::string& pFix);
-		virtual void clearTexture();
-	};
-
-	class Texture2DHdr : public Texture
-	{
-	private:
-		int m_width, m_height, m_channel;
-
-	public:
-		typedef std::shared_ptr<Texture2D> ptr;
-
-		Texture2DHdr(const std::string& path);
-		Texture2DHdr(const char* data, int width, int height);
-		~Texture2DHdr();
-
-		virtual void bind(unsigned int unit);
-		virtual void unBind();
-
-	private:
-		virtual void setupTexture(const std::string& path, const std::string& pFix);
-		virtual void clearTexture();
-	};
-
-	class TextureCubeHdrRaw : public Texture
-	{
-	public:
-		TextureCubeHdrRaw(const char* data, int width, int height, bool mipmap = false);
-		~TextureCubeHdrRaw();
-
-		virtual void bind(unsigned int unit);
-		virtual void unBind();
-
-	private:
-		virtual void setupTexture(const std::string& path, const std::string& pFix);
-		virtual void clearTexture();
-	};
-
-	class TextureRaw : public Texture
-	{
-	private:
-		int m_width, m_height;
-
-	public:
-		TextureRaw(int width, int height, const char* data);
-		~TextureRaw();
 
 		virtual void bind(unsigned int unit);
 		virtual void unBind();

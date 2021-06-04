@@ -21,14 +21,12 @@ namespace Kawaii
 		~StaticModelRenderer();
 
 		virtual void render(Camera3D::ptr camera, Light::ptr sunLight, Camera3D::ptr lightCamera, Shader::ptr shader = nullptr);
-		virtual void renderDepth(Shader::ptr shader, Camera3D::ptr lightCamera);
+		
 	private:
 		void loadModel(const std::string& path);
 		void processNode(aiNode* node, const aiScene* scene);
-		//void processMesh(aiMesh* mesh, const aiScene* scene,
-			//unsigned int& meshIndex, unsigned int& texIndex);
 		void processMesh(aiMesh* mesh, const aiScene* scene,
-			unsigned int& meshIndex, PBRMaterial& pbrMat);
+			unsigned int& meshIndex, unsigned int& texIndex);
 	};
 
 }

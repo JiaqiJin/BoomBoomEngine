@@ -41,3 +41,5 @@ void SponzaScene::initializeScene(Kawaii::RenderSys::ptr renderSys)
 	}
 
 }
+
+

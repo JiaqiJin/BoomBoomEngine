@@ -7,10 +7,6 @@
 #include "Manager/TextureMgr.h"
 #include "RenderTarget/RenderTarget.h"
 #include "Manager/FrameBuffer.h"
-#include "RenderTarget/PointLightRenderer.h"
-#include "PostProcess/DeferedRender.h"
-#include "ShadowSystem.h"
-
 
 namespace Kawaii
 {
@@ -38,24 +34,16 @@ namespace Kawaii
 	class RenderSys
 	{
 	private:
-		// gaussian blur.
-		//GaussianBlur::ptr m_glowBlur;
-
-
 		// skydome.
 		SkyDome::ptr m_skyDome;
 		DirectionalLight::ptr m_sunLight;
 		PointLight::ptr m_pointLight;
-		std::vector<PointLight::ptr> m_pointLights;
 
 		// render state.
 		RenderState m_renderState;
 		int m_width, m_height;
-		ShadowSystem::ptr m_shadowSys;
-
 		FrameBuffer::ptr m_shadowDepthBuffer;
-		PointLightRenderer::ptr m_pointLightRenderer;
-		DeferedRender::ptr m_deferedRender;
+
 		// manager.
 		MeshMgr::ptr m_meshMgr;
 		Camera3D::ptr m_camera;
@@ -79,7 +67,6 @@ namespace Kawaii
 		void createSunLightCamera(glm::vec3 target, float left, float right,
 			float bottom, float top, float near, float far);
 		void setSkyDome(const std::string& path, const std::string& pFix);
-		void setSkyDomeHdr(const std::string& path);
 		Camera3D::ptr createFPSCamera(glm::vec3 pos, glm::vec3 target);
 		Camera3D::ptr createTPSCamera(glm::vec3 pos, glm::vec3 target);
 
@@ -88,21 +75,19 @@ namespace Kawaii
 		MeshMgr::ptr getMeshMgr() { return m_meshMgr; }
 		ShaderMgr::ptr getShaderMgr() { return m_shaderMgr; }
 		TextureMgr::ptr getTextureMgr() { return m_textureMgr; }
-		//GaussianBlur::ptr getGaussianBlur() { return m_glowBlur; }
+
 		// Setter.
 		void setPolygonMode(GLenum mode);
 		void setClearMask(GLbitfield mask);
 		void setClearColor(glm::vec4 clearColor);
 		void setCullFace(bool enable, GLenum face);
 		void setDepthTest(bool enable, GLenum func);
-		void addPointLight(glm::vec3 pos, glm::vec3 radiance);
 		void addRenderTarget(RenderTarget* target) { m_renderList->addRenderer(target); }
 		void setSunLight(glm::vec3 dir, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec);
-		void setSunLight(glm::vec3 dir, glm::vec3 radiance);
+
 		void render();
 
 	private:
-		std::vector<glm::vec3> m_rndVelForPointLights;
-		void updatePointLightPosition();
+		
 	};
 }

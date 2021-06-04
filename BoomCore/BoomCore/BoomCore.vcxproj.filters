@@ -81,6 +81,9 @@
     <ClCompile Include="Renderer\RenderWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Renderer\RenderTarget\RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,28 +93,7 @@
     <ClCompile Include="Renderer\RenderTarget\StaticModelRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\PostProcess\IBL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\RenderTarget\PointLightRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\PostProcess\DeferedRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\RenderTarget\AABBBoundingBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\ShadowSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Renderer\PostProcess\SSAOProcess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -203,22 +185,7 @@
     <ClInclude Include="Renderer\RenderTarget\StaticModelRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\PostProcess\IBL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\RenderTarget\PointLightRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\PostProcess\DeferedRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\RenderTarget\AABBBoundingBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\ShadowSystem.h">
+    <ClInclude Include="Renderer\PostProcess\SSAOProcess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -231,21 +198,5 @@
     <None Include="Shaders\simple_color.vs" />
     <None Include="Shaders\reflect.vs" />
     <None Include="Shaders\reflect.fs" />
-    <None Include="Shaders\PBR\pbrShader.vs" />
-    <None Include="Shaders\PBR\pbrShader.fs" />
-    <None Include="Shaders\PBR\pbrDeferedShading.fs" />
-    <None Include="Shaders\PBR\pbrDeferedShading.vs" />
-    <None Include="Shaders\PBR\convertToCubemap.vs" />
-    <None Include="Shaders\PBR\convertToCubemap.fs" />
-    <None Include="Shaders\PBR\diffuseIntegral.vs" />
-    <None Include="Shaders\PBR\diffuseIntegral.fs" />
-    <None Include="Shaders\PBR\prefilterEnvMap.vs" />
-    <None Include="Shaders\PBR\prefilterEnvMap.fs" />
-    <None Include="Shaders\PBR\genBrdfLUT.vs" />
-    <None Include="Shaders\PBR\genBrdfLUT.fs" />
-    <None Include="Shaders\PBR\lightSource.vs" />
-    <None Include="Shaders\PBR\lightSource.fs" />
-    <None Include="Shaders\depth.vs" />
-    <None Include="Shaders\depth.fs" />
   </ItemGroup>
 </Project>

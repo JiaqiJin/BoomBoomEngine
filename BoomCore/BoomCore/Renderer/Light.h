@@ -12,18 +12,13 @@ namespace Kawaii
 		glm::vec3 m_diffuse;
 		glm::vec3 m_specular;
 
-		glm::vec3 m_radiance;
-
 	public:
 		typedef std::shared_ptr<Light> ptr;
 
 		Light() = default;
 		~Light() = default;
 
-		glm::vec3 getRadiance() const { return m_radiance; }
-
 		virtual void setLightColor(glm::vec3 amb, glm::vec3 diff, glm::vec3 spec);
-		virtual void setLightColor(glm::vec3 radiance);
 		virtual void setLightUniform(Shader::ptr shader, Camera3D::ptr camera) = 0;
 	};
 
@@ -49,9 +44,12 @@ namespace Kawaii
 	{
 	private:
 		float m_radius;
-		unsigned int m_order;
 		glm::vec3 m_position;
 		float m_atteunationCoff;
+
+		float constant;
+		float linear;
+		float quadratic;
 
 	public:
 		typedef std::shared_ptr<PointLight> ptr;
@@ -59,10 +57,8 @@ namespace Kawaii
 		PointLight();
 		virtual ~PointLight() = default;
 
-		void setAttenuationCoff(float coff);
-		virtual void setLightColor(glm::vec3 radiance);
-		void setPosition(glm::vec3 pos, unsigned int order);
 		virtual void setLightUniform(Shader::ptr shader, Camera3D::ptr camera);
+		void setPosition(glm::vec3 pos);
 
 		glm::vec3 getPosition() const;
 

@@ -49,13 +49,13 @@ int main()
     
     unsigned int testShader = Kawaii::ShaderMgr::getSingleton()->loadShader("test", "Shaders/shader.vs", "Shaders/shader.fs");
     //unsigned int testShader2 = Kawaii::ShaderMgr::getSingleton()->loadShader("test", "Shaders/shader.vs", "Shaders/shader.fs");
-    //Kawaii::SimpleRender* simpleRender = new Kawaii::SimpleRender(testShader);
-    //simpleRender->addMesh(sphereMeshIndex);
+    Kawaii::SimpleRender* simpleRender = new Kawaii::SimpleRender(testShader);
+    simpleRender->addMesh(sphereMeshIndex);
     
 
     unsigned int skyId = Kawaii::TextureMgr::getSingleton()->loadTextureCube("kawaii","res/skybox/", ".png");
     //std::cout << skyId;
-    //simpleRender->addTexture(skyId);
+    simpleRender->addTexture(skyId);
 
     //unsigned int shaderIndexMode = shaderMgr
     
@@ -168,9 +168,9 @@ int main()
         */
 
         Kawaii::Shader::ptr shad = shaderMgr->getShader(testShader);
-        //simpleRender->testrender(&camera, shad);
+        simpleRender->testrender(&camera, shad);
         //model->test
-    //myModel->testrender(&camera, shad);
+        myModel->testrender(&camera, shad);
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         skyBoxShader.bind();
